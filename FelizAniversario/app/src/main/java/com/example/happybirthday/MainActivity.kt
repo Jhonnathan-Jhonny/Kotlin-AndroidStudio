@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,7 +37,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    GreetingImage(mensage = "Feliz aniversário Vitória!!!", from = "De Jhonnathan")
+                    GreetingImage(mensage = stringResource(R.string.feliz_aniversrio_vitoria), from = getString(
+                        R.string.signature_text
+                    ))
                 }
             }
         }
@@ -50,6 +54,7 @@ fun GreetingText(mensage:String, from: String, modifier: Modifier = Modifier){
 //    ) {
         Column(
             verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier,
         ) {
             Text(
@@ -78,7 +83,9 @@ fun GreetingImage(mensage: String, from: String, modifier: Modifier = Modifier){
     Box(modifier = modifier) {
         Image(
             painter = image,
-            contentDescription = null
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            alpha = 0.5F
         )
         GreetingText(
             mensage = mensage,
@@ -96,6 +103,8 @@ fun GreetingImage(mensage: String, from: String, modifier: Modifier = Modifier){
 @Composable
 fun BirthdayCardPreview() {
     HappyBirthdayTheme {
-        GreetingImage(mensage = "Feliz aniversário Vitória!!!", from = "De Jhonnathan")
+        GreetingImage(mensage = stringResource(id = R.string.feliz_aniversrio_vitoria), from = stringResource(
+            id = R.string.signature_text
+        ))
     }
 }
