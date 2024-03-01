@@ -149,7 +149,7 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
         Column (){
             Button(
                 onClick = {
-                    result1 = 0 
+                    result1 = 0
                     result2 = 0
                 },
                 modifier
