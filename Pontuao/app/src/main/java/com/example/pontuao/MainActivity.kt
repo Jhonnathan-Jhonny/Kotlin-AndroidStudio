@@ -11,19 +11,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,7 +56,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun LayoutInicial(modifier: Modifier = Modifier) {
     var result1 by remember { mutableIntStateOf(0) }
-    var placar1: Int = result1
+    val placar1: Int = result1
+    var time1 by remember { mutableStateOf("") }
+    var usando1 by remember { mutableStateOf(false) }
+
     Column (){
         Column (
             modifier = Modifier
@@ -61,15 +71,10 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
             ){
             Text(
                 text = placar1.toString(),
-                fontSize = 150.sp,
+                fontSize = 100.sp,
                 color = Color.White
             )
-            Text(
-                text = "Time 1",
-                Modifier.padding(bottom = 10.dp),
-                fontSize = 30.sp,
-                color = Color.White
-            )
+            NomeTime(value = time1, onValueChange = {time1 = it}, {usando1},onUsandoChange = { usando1 = it })
             Row(
             ) {
                 Button(
@@ -100,7 +105,11 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
             }
         }
         var result2 by remember { mutableIntStateOf(0) }
-        var placar2: Int = result2
+        val placar2: Int = result2
+        var time2 by remember { mutableStateOf("") }
+        var usando2 by remember { mutableStateOf(false) }
+
+
         Column (modifier = Modifier
             .background(Color.Red)
             .weight(1f)
@@ -110,15 +119,11 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
         {
             Text(
                 text = result2.toString(),
-                fontSize = 150.sp,
+                fontSize = 100.sp,
                 color = Color.White
             )
-            Text(
-                text = "Time 2",
-                Modifier.padding(bottom = 10.dp),
-                fontSize = 30.sp,
-                color = Color.White
-                )
+            NomeTime(value = time2, onValueChange = {time2 = it}, {usando2},onUsandoChange = { usando2 = it })
+
             Row{
                 Button(
                     onClick = { if (placar2 != 0){result2--} },
@@ -151,6 +156,10 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
                 onClick = {
                     result1 = 0
                     result2 = 0
+                    usando1 = false
+                    usando2 = false
+                    time1 = ""
+                    time2 = ""
                 },
                 modifier
                     .fillMaxWidth()
@@ -165,6 +174,57 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NomeTime(
+    value: String,
+    onValueChange: (String) -> Unit,
+    usando: () -> Boolean,
+    onUsandoChange: (Boolean) -> Unit, // Função para alterar o estado "usando"
+){
+    Row {
+        if (!usando()){ // Usando a função "usando" para verificar o estado
+            TextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier
+                    .padding(bottom = 10.dp)
+                    .width(200.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.Transparent
+                ),
+                label = { Text(
+                    text = "Nome do time",
+                    Modifier.alpha(0.5f)
+                )},
+            )
+            Button(
+                onClick = { onUsandoChange(true) } // Chamando a função para alterar o estado "usando"
+            ) {
+                Text(text = "Confirmar")
+            }
+        }
+        if (usando()) { // Usando a função "usando" para verificar o estado
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = value,
+                    modifier = Modifier
+                        .padding(bottom = 10.dp),
+                    textAlign = TextAlign.Center
+                )
+                Button(onClick = { onUsandoChange(false) }) {
+                    Text(text = "Editar")
+                }
+            }
+
+        }
+    }
+
 }
 
 @Preview(showBackground = true)
