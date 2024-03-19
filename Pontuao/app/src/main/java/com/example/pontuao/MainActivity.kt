@@ -1,6 +1,7 @@
 package com.example.pontuao
 
 import android.os.Bundle
+import android.widget.Switch
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pontuao.ui.theme.PontuaçãoTheme
+import androidx.compose.material3.Switch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +59,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun LayoutInicial(modifier: Modifier = Modifier) {
     var result1 by remember { mutableIntStateOf(0) }
+    var temaEscuro by remember { mutableStateOf(false) }
     val placar1: Int = result1
     var time1 by remember { mutableStateOf("") }
     var usando1 by remember { mutableStateOf(false) }
@@ -63,7 +67,10 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
     Column (){
         Column (
             modifier = Modifier
-                .background(Color.Blue)
+                .background(
+                    if (temaEscuro) { Color.Gray }
+                    else { Color.Blue }
+                )
                 .weight(1f)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceBetween,
@@ -111,7 +118,10 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
 
 
         Column (modifier = Modifier
-            .background(Color.Red)
+            .background(
+                if (temaEscuro) { Color.Black }
+                else { Color.Red }
+            )
             .weight(1f)
             .fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceBetween,
@@ -122,6 +132,7 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
                 fontSize = 100.sp,
                 color = Color.White
             )
+            MudarTema(temaEscuro = temaEscuro, onTemaEscuro = {temaEscuro = it})
             NomeTime(value = time2, onValueChange = {time2 = it}, {usando2},onUsandoChange = { usando2 = it })
 
             Row{
@@ -225,6 +236,25 @@ fun NomeTime(
         }
     }
 
+}
+
+@Composable
+fun MudarTema(
+    temaEscuro:Boolean,
+    onTemaEscuro: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+){
+    Row (
+
+    ){
+        Switch(
+            checked = temaEscuro,
+            onCheckedChange = onTemaEscuro,
+            modifier = modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.End),
+        )
+    }
 }
 
 @Preview(showBackground = true)
