@@ -93,7 +93,7 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
 
                     ) {
                     Text(
-                        text = "-",
+                            text = " +",
                         fontSize = 40.sp,
                         )
                 }
@@ -105,7 +105,7 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
                     colors = ButtonDefaults.buttonColors(Color.White)
                 ) {
                     Text(
-                        text = "+",
+                        text = " -",
                         fontSize = 30.sp
                     )
                 }
@@ -174,13 +174,27 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
                 },
                 modifier
                     .fillMaxWidth()
-                    .background(Color.Yellow)
+                    .background(
+                        if (temaEscuro){
+                            Color.White
+                        }
+                        else{Color.Yellow}
+                    )
                     .padding(top = 10.dp),
-                colors = ButtonDefaults.buttonColors(Color.Yellow),
+                colors = ButtonDefaults.buttonColors(
+                    if (temaEscuro){
+                    Color.White
+                    }
+                    else{Color.Yellow}),
             ) {
                 Text(
                     text = "Zerar",
                     fontSize = 20.sp,
+                    color = if (temaEscuro) {
+                        Color(android.graphics.Color.parseColor("#000000"))
+                    } else {
+                        Color(android.graphics.Color.parseColor("#FFFFFF"))
+                    }
                 )
             }
         }
