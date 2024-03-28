@@ -93,7 +93,7 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
 
                     ) {
                     Text(
-                            text = " +",
+                            text = " -",
                         fontSize = 40.sp,
                         )
                 }
@@ -105,7 +105,7 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
                     colors = ButtonDefaults.buttonColors(Color.White)
                 ) {
                     Text(
-                        text = " -",
+                        text = " +",
                         fontSize = 30.sp
                     )
                 }
