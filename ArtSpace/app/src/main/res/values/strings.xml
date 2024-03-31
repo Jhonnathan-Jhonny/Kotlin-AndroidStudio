@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">ArtSpace</string>
     <string name="mona_lisa">Mona Lisa</string>
+    <string name="o_grito">O grito</string>
+    <string name="van_gogh">Van Gogh</string>
 </resources>
