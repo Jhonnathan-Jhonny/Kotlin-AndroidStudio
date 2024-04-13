@@ -1,7 +1,9 @@
 package com.example.pontuao
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.widget.Switch
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -39,7 +41,24 @@ import androidx.compose.ui.unit.sp
 import com.example.pontuao.ui.theme.PontuaçãoTheme
 import androidx.compose.material3.Switch
 
+
 class MainActivity : ComponentActivity() {
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.action_main->{
+                println("main menu clicado")
+                item.isChecked = !item.isChecked
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+    @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -56,6 +75,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun LayoutInicial(modifier: Modifier = Modifier) {
     var result1 by remember { mutableIntStateOf(0) }
@@ -64,12 +84,24 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
     var time1 by remember { mutableStateOf("") }
     var usando1 by remember { mutableStateOf(false) }
 
+
     Column (){
+        Row (
+            modifier
+                .background(Color.White)
+                .padding(20.dp)
+                .fillMaxWidth()
+        ){
+
+        }
         Column (
             modifier = Modifier
                 .background(
-                    if (temaEscuro) { Color.Gray }
-                    else { Color.Blue }
+                    if (temaEscuro) {
+                        Color.Gray
+                    } else {
+                        Color.Blue
+                    }
                 )
                 .weight(1f)
                 .fillMaxWidth(),
@@ -93,7 +125,7 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
 
                     ) {
                     Text(
-                            text = " -",
+                            text = "- ",
                         fontSize = 40.sp,
                         )
                 }
@@ -105,7 +137,7 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
                     colors = ButtonDefaults.buttonColors(Color.White)
                 ) {
                     Text(
-                        text = " +",
+                        text = "+ ",
                         fontSize = 30.sp
                     )
                 }
@@ -119,8 +151,11 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
 
         Column (modifier = Modifier
             .background(
-                if (temaEscuro) { Color.Black }
-                else { Color.Red }
+                if (temaEscuro) {
+                    Color.Black
+                } else {
+                    Color.Red
+                }
             )
             .weight(1f)
             .fillMaxWidth(),
@@ -175,10 +210,11 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
                 modifier
                     .fillMaxWidth()
                     .background(
-                        if (temaEscuro){
+                        if (temaEscuro) {
                             Color.White
+                        } else {
+                            Color.Yellow
                         }
-                        else{Color.Yellow}
                     )
                     .padding(top = 10.dp),
                 colors = ButtonDefaults.buttonColors(

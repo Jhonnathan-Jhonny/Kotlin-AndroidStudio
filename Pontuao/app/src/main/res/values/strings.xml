@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Pontuação</string>
+    <string name="mudar_tema">Mudar tema</string>
+    <string name="menu1">Menu1</string>
 </resources>

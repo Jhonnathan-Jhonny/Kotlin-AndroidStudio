@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_main"
+        android:checkable="true"
+        android:checked="false"
+        android:title="@string/mudar_tema"
+        android:icon="@drawable/ic_android_black_24dp"
+        android:showAsAction="never">
+    </item>
+</menu>
