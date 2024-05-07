@@ -92,7 +92,6 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
                 .padding(20.dp)
                 .fillMaxWidth()
         ){
-
         }
         Column (
             modifier = Modifier
