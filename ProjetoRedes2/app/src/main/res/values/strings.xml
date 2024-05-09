@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ProjetoRedes</string>
+    <string name="entrar">Entrar</string>
+    <string name="cadastrar_se">Cadastrar-se</string>
+    <string name="senha">Senha</string>
+    <string name="email">Email</string>
+    <string name="texto_ilustrativo">Imagem de uma ilustração de usuário</string>
+</resources>

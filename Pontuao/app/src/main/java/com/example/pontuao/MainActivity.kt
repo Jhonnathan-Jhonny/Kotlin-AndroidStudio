@@ -92,6 +92,7 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
                 .padding(20.dp)
                 .fillMaxWidth()
         ){
+            MudarTema(temaEscuro = temaEscuro, onTemaEscuro = {temaEscuro = it})
         }
         Column (
             modifier = Modifier
@@ -166,7 +167,6 @@ fun LayoutInicial(modifier: Modifier = Modifier) {
                 fontSize = 100.sp,
                 color = Color.White
             )
-            MudarTema(temaEscuro = temaEscuro, onTemaEscuro = {temaEscuro = it})
             NomeTime(value = time2, onValueChange = {time2 = it}, {usando2},onUsandoChange = { usando2 = it })
 
             Row{
