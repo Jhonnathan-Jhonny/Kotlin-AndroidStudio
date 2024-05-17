@@ -38,6 +38,9 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:3.5.3")
     implementation("io.insert-koin:koin-logger-slf4j:3.5.3")
 
+    //Bcrypt
+    implementation("org.mindrot:jbcrypt:0.4")
+
 
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-swagger-jvm")

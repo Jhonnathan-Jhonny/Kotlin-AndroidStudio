@@ -8,4 +8,5 @@ interface UserRepository {
     suspend fun findById(objectId: ObjectId): User?
     suspend fun delete(objectId: ObjectId): Long
     suspend fun updateUser(objectId: ObjectId, user: User): Long
+    suspend fun findByName(userName: String): User?
 }

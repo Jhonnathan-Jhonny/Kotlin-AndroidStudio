@@ -66,4 +66,8 @@ private val mongoDatabase: MongoDatabase
         }
         return 0    }
 
+    override suspend fun findByName(userName: String): User? =
+        mongoDatabase.getCollection<User>(USER_COLLECTION).withDocumentClass<User>()
+            .find(Filters.eq("name", userName))
+            .firstOrNull()
 }

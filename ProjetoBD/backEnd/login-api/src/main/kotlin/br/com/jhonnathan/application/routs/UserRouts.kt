@@ -10,12 +10,18 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.bson.types.ObjectId
 import org.koin.ktor.ext.inject
+import org.mindrot.jbcrypt.BCrypt
 
 fun Route.userRoutes() {
     val repository by inject<UserRepository>()
     route("/user") {
         post("/register") {
             val user = call.receive<UserRequest>()
+            val userExist = repository.findByName(user.name)
+            if(userExist != null){
+                return@post call.respond(HttpStatusCode.Conflict,"User name already exists")
+            }
+            user.password = BCrypt.hashpw(user.password, BCrypt.gensalt())
             val insertedId = repository.save(user.toDomain())
             call.respond(HttpStatusCode.Created, "Created user with id $insertedId")
         }
@@ -45,8 +51,8 @@ fun Route.userRoutes() {
             } ?: call.respondText("No records found for id $id")
         }
 
-        patch("/edit/{id?}") {
-            val id = call.parameters["id"] ?: return@patch call.respondText(
+        put("/edit/{id?}") {
+            val id = call.parameters["id"] ?: return@put call.respondText(
                 text = "Missing fitness id",
                 status = HttpStatusCode.BadRequest
             )
