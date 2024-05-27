@@ -1,4 +1,4 @@
-package com.example.projetobd_front
+package com.example.frontend
 
 import org.junit.Test
 

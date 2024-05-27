@@ -4,7 +4,7 @@ info:
   description: API para criar, listar, atualizar e excluir usuários
   version: 1.0.0
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8081
 paths:
   /user/register:
     post:
