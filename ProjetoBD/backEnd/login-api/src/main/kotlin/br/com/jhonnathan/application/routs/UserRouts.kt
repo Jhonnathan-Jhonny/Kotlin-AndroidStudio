@@ -1,5 +1,6 @@
 package br.com.jhonnathan.application.routs
 
+import br.com.jhonnathan.UserSession
 import br.com.jhonnathan.application.request.UserRequest
 import br.com.jhonnathan.application.request.toDomain
 import br.com.jhonnathan.domain.ports.UserRepository
@@ -8,6 +9,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
 import org.bson.types.ObjectId
 import org.koin.ktor.ext.inject
 import org.mindrot.jbcrypt.BCrypt
@@ -24,6 +26,25 @@ fun Route.userRoutes() {
             user.password = BCrypt.hashpw(user.password, BCrypt.gensalt())
             val insertedId = repository.save(user.toDomain())
             call.respond(HttpStatusCode.Created, "Created user with id $insertedId")
+        }
+
+        post("/login") {
+            val user = call.receive<UserRequest>()
+            val userInDb = repository.findByEmail(user.email)
+            if (userInDb == null || !BCrypt.checkpw(user.password, userInDb.password)) {
+                return@post call.respond(HttpStatusCode.Unauthorized, "Invalid username or password")
+            }
+            call.sessions.set(UserSession(userInDb.id.toString()))
+            call.respondText("User logged in successfully", status = HttpStatusCode.OK)
+        }
+
+        post("/logout") {
+            try {
+                call.sessions.clear<UserSession>()
+                call.respondText("User logged out successfully", status = HttpStatusCode.OK)
+            } catch (e: Exception) {
+                call.respondText("Failed to logout: ${e.message}", status = HttpStatusCode.InternalServerError)
+            }
         }
 
         delete("/delete/{id?}") {

@@ -70,4 +70,10 @@ private val mongoDatabase: MongoDatabase
         mongoDatabase.getCollection<User>(USER_COLLECTION).withDocumentClass<User>()
             .find(Filters.eq("name", userName))
             .firstOrNull()
+
+    override suspend fun findByEmail(email: String): User? =
+        mongoDatabase.getCollection<User>(USER_COLLECTION)
+        .withDocumentClass<User>()
+        .find(Filters.eq("email", email))
+        .firstOrNull()
 }
