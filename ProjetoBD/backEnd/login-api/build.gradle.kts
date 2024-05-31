@@ -24,34 +24,27 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-server-swagger-jvm")
+    implementation("io.ktor:ktor-server-core-jvm:2.0.0")
+    implementation("io.ktor:ktor-server-swagger-jvm:2.0.0")
     implementation("io.ktor:ktor-server-sessions:2.0.0")
     implementation("io.ktor:ktor-server-auth:2.0.0")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm")
-    implementation("io.ktor:ktor-serialization-gson-jvm")
-    implementation("io.ktor:ktor-server-tomcat-jvm")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:2.0.0")
+    implementation("io.ktor:ktor-serialization-gson-jvm:2.0.0")
+    implementation("io.ktor:ktor-server-tomcat-jvm:2.0.0")
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
-    //MongoDB
+    // MongoDB
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:4.10.1")
 
-    //Koin Dependency Injection
+    // Koin Dependency Injection
     implementation("io.insert-koin:koin-ktor:3.5.3")
     implementation("io.insert-koin:koin-logger-slf4j:3.5.3")
 
-    //Bcrypt
+    // Bcrypt
     implementation("org.mindrot:jbcrypt:0.4")
 
-
-    implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-server-swagger-jvm")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm")
-    implementation("io.ktor:ktor-serialization-gson-jvm")
-    implementation("io.ktor:ktor-server-tomcat-jvm")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
-    testImplementation("io.ktor:ktor-server-tests-jvm")
+    // Test dependencies
+    testImplementation("io.ktor:ktor-server-tests-jvm:2.0.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    implementation("io.ktor:ktor-server-sessions:2.0.0")
-    implementation("io.ktor:ktor-server-auth:2.0.0")
 }
+

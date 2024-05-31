@@ -25,7 +25,7 @@ fun Route.userRoutes() {
             }
             user.password = BCrypt.hashpw(user.password, BCrypt.gensalt())
             val insertedId = repository.save(user.toDomain())
-            call.respond(HttpStatusCode.Created, "Created user with id $insertedId")
+            return@post call.respond(HttpStatusCode.OK, "Created user with id $insertedId")
         }
 
         post("/login") {
@@ -35,7 +35,7 @@ fun Route.userRoutes() {
                 return@post call.respond(HttpStatusCode.Unauthorized, "Invalid username or password")
             }
             call.sessions.set(UserSession(userInDb.id.toString()))
-            call.respondText("User logged in successfully", status = HttpStatusCode.OK)
+            return@post call.respondText("User logged in successfully", status = HttpStatusCode.OK)
         }
 
         post("/logout") {
@@ -59,17 +59,17 @@ fun Route.userRoutes() {
             return@delete call.respondText("User not found", status = HttpStatusCode.NotFound)
         }
 
-        get("/search/{id?}") {
-            val id = call.parameters["id"]
-            if (id.isNullOrEmpty()) {
+        get("/search/{name?}") {
+            val name = call.parameters["name"]
+            if (name.isNullOrEmpty()) {
                 return@get call.respondText(
                     text = "Missing id",
                     status = HttpStatusCode.BadRequest
                 )
             }
-            repository.findById(ObjectId(id))?.let {
+            repository.findByName(name)?.let {
                 call.respond(it.toResponse())
-            } ?: call.respondText("No records found for id $id")
+            } ?: call.respondText("No records found for name $name")
         }
 
         put("/edit/{id?}") {
