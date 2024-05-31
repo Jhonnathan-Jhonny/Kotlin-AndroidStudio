@@ -52,6 +52,22 @@ class UserRepository {
             RegistrationResponse(false, errorMessage)
         }
     }
+
+    suspend fun loginUser(email: String, password: String): RegistrationResponse {
+        val apiService = httpClient()
+        val request = UserRequest("", email, password)
+        val response: HttpResponse = apiService.post("http://10.0.0.169:8081/user/login") {
+            contentType(io.ktor.http.ContentType.Application.Json)
+            setBody(request)
+        }
+
+        return if (response.status == HttpStatusCode.OK) {
+            RegistrationResponse(true, "user successfully logged in")
+        } else {
+            val errorMessage = response.bodyAsText()
+            RegistrationResponse(false, errorMessage)
+        }
+    }
 }
 //    suspend fun loginUser(email: String, password: String): Response<UserResponse> {
 //        val request = UserRequest(name = "", email = email, password = password)

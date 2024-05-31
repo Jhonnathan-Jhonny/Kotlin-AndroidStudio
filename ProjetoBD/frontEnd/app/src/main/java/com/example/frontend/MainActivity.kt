@@ -26,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,10 +35,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.repository.UserRepository
 import com.example.frontend.ui.theme.FrontEndTheme
-import io.ktor.client.statement.request
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -66,13 +63,8 @@ fun MyApp() {
 
 @Composable
 fun InfoScreean(navController: NavController){
-    Column (
-    ){
-        Text(
-            text = "Logado com sucesso",
-            fontWeight = FontWeight.Bold
-        )
-
+    Column {
+        
     }
 }
 
@@ -83,6 +75,7 @@ fun LoginScreen(navController: NavController? = null){
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -100,7 +93,9 @@ fun LoginScreen(navController: NavController? = null){
             modifier = Modifier.fillMaxWidth())
         Row {
             Button(onClick = {
-                //loginProcess(context, email, password, navController)
+                if (email.isNotBlank() && password.isNotBlank()) {
+                    handleLogin(coroutineScope,context,email,password,navController)
+                }
             },
                 Modifier.padding(10.dp)) {
                 Text(text = "Login")
@@ -158,8 +153,7 @@ fun RegistrationScreen(navController: NavController? = null) {
             onClick = {
                 if (name.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
                     erro = 3
-                    handleRegistration(coroutineScope, context, name, email, password)
-                    navController!!.navigate("login")
+                    handleRegistration(coroutineScope, context, name, email, password, navController)
                 } else {
                     erro = 2
                 }
@@ -174,47 +168,31 @@ fun RegistrationScreen(navController: NavController? = null) {
     }
 }
 
-//private suspend fun handleLogin(
-//    scope: CoroutineScope,
-//    context: Context,
-//    email: String,
-//    password: String
-//): Boolean {
-//    val loginChannel = Channel<Boolean>()
-//    scope.launch {
-//        try {
-//            val response = userRepository.loginUser(email, password)
-//            val isLoggedIn = response.isSuccessful
-//
-//            withContext(Dispatchers.Main) {
-//                loginChannel.send(isLoggedIn)
-//            }
-//        } catch (e: Exception) {
-//            withContext(Dispatchers.Main) {
-//            }
-//        }
-//    }
-//    return loginChannel.receive()
-//}
-
-//fun loginProcess(context: Context, email: String, password: String, navController: NavController?) {
-//    val scope = CoroutineScope(Dispatchers.Main)
-//    scope.launch {
-//        try {
-//            val isLoggedIn = handleLogin(scope, context, email, password)
-//            if (isLoggedIn){
-//                navController?.navigate("information")
-//            }else {
-//                Toast.makeText(context, "Registration failed: Usuário não cadastrado", Toast.LENGTH_SHORT).show()
-//
-//            }
-//        } catch (e: Exception) {
-//            Toast.makeText(context, "ERRO", Toast.LENGTH_SHORT).show()
-//
-//        }
-//
-//    }
-//}
+private fun handleLogin(
+    scope: CoroutineScope,
+    context: Context,
+    email: String,
+    password: String,
+    navController: NavController?
+) {
+    scope.launch {
+        try {
+            val response = userRepository.loginUser(email, password)
+            withContext(Dispatchers.Main) {
+                if (response.status) {
+                    navController?.navigate("information")
+                    Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Login failed: ${response.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Login failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+}
 
 private fun handleRegistration(
     scope: CoroutineScope,
@@ -222,12 +200,14 @@ private fun handleRegistration(
     name: String,
     email: String,
     password: String,
+    navController: NavController?
 ) {
     scope.launch {
         try {
             val response = userRepository.registerUser(name, email, password)
             withContext(Dispatchers.Main) {
                 if (response.status) {
+                    navController?.navigate("login")
                     Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, "Registration failed: ${response.message}", Toast.LENGTH_SHORT).show()
