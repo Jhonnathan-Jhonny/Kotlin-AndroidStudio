@@ -26,13 +26,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.frontend.repository.UserRepository
 import com.example.frontend.ui.theme.FrontEndTheme
 import kotlinx.coroutines.CoroutineScope
@@ -57,14 +58,34 @@ fun MyApp() {
     NavHost(navController = navController, startDestination = "login") {
         composable("login") { LoginScreen(navController) }
         composable("registration") { RegistrationScreen(navController) }
-        composable("information") { InfoScreean(navController) }
+        composable(
+            route = "information/{name}/{email}/{password}",
+            arguments = listOf(
+                navArgument("name") { type = NavType.StringType },
+                navArgument("email") { type = NavType.StringType },
+                navArgument("password") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val name = backStackEntry.arguments?.getString("name") ?: ""
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            val password = backStackEntry.arguments?.getString("password") ?: ""
+            InfoScreean(navController,name, email, password)
+        }
     }
 }
 
+
 @Composable
-fun InfoScreean(navController: NavController){
+fun InfoScreean(
+    navController: NavController? = null,
+    name: String,
+    email: String,
+    password: String
+) {
     Column {
-        
+        Text(text = "Name: $name")
+        Text(text = "Email: $email")
+        Text(text = "Password: $password")
     }
 }
 
@@ -194,6 +215,7 @@ private fun handleLogin(
     }
 }
 
+
 private fun handleRegistration(
     scope: CoroutineScope,
     context: Context,
@@ -226,7 +248,8 @@ private fun handleRegistration(
 @Composable
 fun GreetingPreview() {
     FrontEndTheme {
-        LoginScreen()
+        //LoginScreen()
+        InfoScreean(name = "", email = "", password = "")
         //RegistrationScreen()
     }
 }

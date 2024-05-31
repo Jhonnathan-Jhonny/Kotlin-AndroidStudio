@@ -2,6 +2,8 @@ package com.example.frontend.repository
 
 import com.example.frontend.model.UserRequest
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.call.receive
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -18,7 +20,10 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 @Serializable
-data class RegistrationResponse(val status: Boolean, val message: String)
+data class User(val name: String, val email: String, val password: String)
+
+@Serializable
+data class RegistrationResponse(val status: Boolean, val message: String, val user: User? = null)
 
 class UserRepository {
 
@@ -46,7 +51,7 @@ class UserRepository {
         }
 
         return if (response.status == HttpStatusCode.OK) {
-            RegistrationResponse(true, "Created user successfully")
+            RegistrationResponse(true, "Created user successfully", User(name, email, password))
         } else {
             val errorMessage = response.bodyAsText()
             RegistrationResponse(false, errorMessage)
@@ -62,7 +67,8 @@ class UserRepository {
         }
 
         return if (response.status == HttpStatusCode.OK) {
-            RegistrationResponse(true, "user successfully logged in")
+            val user = response.body<User>()
+            RegistrationResponse(true, "user successfully logged in", user)
         } else {
             val errorMessage = response.bodyAsText()
             RegistrationResponse(false, errorMessage)
