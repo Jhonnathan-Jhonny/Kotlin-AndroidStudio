@@ -3,10 +3,10 @@ package br.com.jhonnathan.application.routs
 import br.com.jhonnathan.UserSession
 import br.com.jhonnathan.application.request.UserRequest
 import br.com.jhonnathan.application.request.toDomain
-import br.com.jhonnathan.domain.entity.User
 import br.com.jhonnathan.domain.ports.UserRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -18,6 +18,17 @@ import org.mindrot.jbcrypt.BCrypt
 fun Route.userRoutes() {
     val repository by inject<UserRepository>()
     route("/user") {
+
+        get("/me") {
+            val userSession = call.principal<UserSession>()
+            val user = repository.findById(ObjectId(userSession!!.userId))
+            if (user != null) {
+                call.respond(user)
+            } else {
+                call.respond(HttpStatusCode.NotFound, "User not found")
+            }
+        }
+
         post("/register") {
             val user = call.receive<UserRequest>()
             val userExist = repository.findByName(user.name)

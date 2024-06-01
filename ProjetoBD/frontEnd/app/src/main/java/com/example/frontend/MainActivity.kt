@@ -23,22 +23,16 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.os.bundleOf
 import androidx.navigation.NavController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.example.frontend.repository.RegistrationResponse
 import com.example.frontend.repository.User
 import com.example.frontend.repository.UserRepository
 import com.example.frontend.ui.theme.FrontEndTheme
@@ -46,7 +40,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.io.path.ExperimentalPathApi
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,71 +53,51 @@ class MainActivity : ComponentActivity() {
 private val userRepository = UserRepository()
 
 
-//@Composable
-//fun MyApp() {
-//    val navController = rememberNavController()
-//    NavHost(navController = navController, startDestination = "login") {
-//        composable("login") { LoginScreen(navController) }
-//        composable("registration") { RegistrationScreen(navController) }
-//        composable("information/{name}/{email}/{password}") { InfoScreean(navController,"","","") }
-//    }
-//}
-
 @Composable
 fun MyApp() {
     val navController = rememberNavController()
-    val backStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry.value?.destination?.route
-
-    val infoArgs = rememberSaveable {
-        mutableStateOf<InfoArgs?>(null)
-    }
-
     NavHost(navController = navController, startDestination = "login") {
         composable("login") { LoginScreen(navController) }
         composable("registration") { RegistrationScreen(navController) }
-        composable(
-            "information/{name}/{email}/{password}",
-            arguments = listOf(
-                navArgument("name") { type = NavType.StringType },
-                navArgument("email") { type = NavType.StringType },
-                navArgument("password") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val name = backStackEntry.arguments?.getString("name") ?: ""
-            val email = backStackEntry.arguments?.getString("email") ?: ""
-            val password = backStackEntry.arguments?.getString("password") ?: ""
-            infoArgs.value = InfoArgs(name, email, password)
-            InfoScreean(navController, name, email, password)
-        }
-    }
-
-    // Navegação para a tela de informações quando o usuário efetua login
-    LaunchedEffect(key1 = currentRoute) {
-        if (currentRoute == "information/{name}/{email}/{password}") {
-            val name = infoArgs.value?.name ?: ""
-            val email = infoArgs.value?.email ?: ""
-            val password = infoArgs.value?.password ?: ""
-            navController.navigate("information/$name/$email/$password")
-        }
+        composable("information") { InfoScreen(navController) }
     }
 }
-
-data class InfoArgs(val name: String, val email: String, val password: String)
 
 @Composable
-fun InfoScreean(
-    navController: NavController? = null,
-    name: String,
-    email: String,
-    password: String
+fun InfoScreen(
+    navController: NavController? = null
 ) {
-    Column {
-        Text(text = "Name: $name")
-        Text(text = "Email: $email")
-        Text(text = "Password: $password")
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    var user by remember { mutableStateOf<User?>(null) }
+
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            try {
+                val userInfo = userRepository.getUserInfo()
+                user = userInfo
+            } catch (e: Exception) {
+                Toast.makeText(context, "Failed to load user info: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    user?.let {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = "Name: ${it.name}")
+            Text(text = "Email: ${it.email}")
+            Text(text = "Password: ${it.password}")
+        }
     }
 }
+
+
 
 @Composable
 fun LoginScreen(navController: NavController? = null){
@@ -238,7 +211,7 @@ private fun handleLogin(
             val response = userRepository.loginUser(email, password)
             withContext(Dispatchers.Main) {
                 if (response.status) {
-                    navController?.navigate("information/${response.user?.name}/${response.user?.email}/${response.user?.password}")
+                    navController?.navigate("information")
                     Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, "Login failed: Invalid credentials.", Toast.LENGTH_SHORT).show()
@@ -288,7 +261,7 @@ private fun handleRegistration(
 fun GreetingPreview() {
     FrontEndTheme {
         //LoginScreen()
-        InfoScreean(name = "", email = "", password = "")
+        InfoScreen()
         //RegistrationScreen()
     }
 }
