@@ -17,29 +17,36 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.frontend.repository.RegistrationResponse
+import com.example.frontend.repository.User
 import com.example.frontend.repository.UserRepository
 import com.example.frontend.ui.theme.FrontEndTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.io.path.ExperimentalPathApi
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,14 +59,32 @@ class MainActivity : ComponentActivity() {
 
 private val userRepository = UserRepository()
 
+
+//@Composable
+//fun MyApp() {
+//    val navController = rememberNavController()
+//    NavHost(navController = navController, startDestination = "login") {
+//        composable("login") { LoginScreen(navController) }
+//        composable("registration") { RegistrationScreen(navController) }
+//        composable("information/{name}/{email}/{password}") { InfoScreean(navController,"","","") }
+//    }
+//}
+
 @Composable
 fun MyApp() {
     val navController = rememberNavController()
+    val backStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry.value?.destination?.route
+
+    val infoArgs = rememberSaveable {
+        mutableStateOf<InfoArgs?>(null)
+    }
+
     NavHost(navController = navController, startDestination = "login") {
         composable("login") { LoginScreen(navController) }
         composable("registration") { RegistrationScreen(navController) }
         composable(
-            route = "information/{name}/{email}/{password}",
+            "information/{name}/{email}/{password}",
             arguments = listOf(
                 navArgument("name") { type = NavType.StringType },
                 navArgument("email") { type = NavType.StringType },
@@ -69,11 +94,23 @@ fun MyApp() {
             val name = backStackEntry.arguments?.getString("name") ?: ""
             val email = backStackEntry.arguments?.getString("email") ?: ""
             val password = backStackEntry.arguments?.getString("password") ?: ""
-            InfoScreean(navController,name, email, password)
+            infoArgs.value = InfoArgs(name, email, password)
+            InfoScreean(navController, name, email, password)
+        }
+    }
+
+    // Navegação para a tela de informações quando o usuário efetua login
+    LaunchedEffect(key1 = currentRoute) {
+        if (currentRoute == "information/{name}/{email}/{password}") {
+            val name = infoArgs.value?.name ?: ""
+            val email = infoArgs.value?.email ?: ""
+            val password = infoArgs.value?.password ?: ""
+            navController.navigate("information/$name/$email/$password")
         }
     }
 }
 
+data class InfoArgs(val name: String, val email: String, val password: String)
 
 @Composable
 fun InfoScreean(
@@ -201,10 +238,10 @@ private fun handleLogin(
             val response = userRepository.loginUser(email, password)
             withContext(Dispatchers.Main) {
                 if (response.status) {
-                    navController?.navigate("information")
+                    navController?.navigate("information/${response.user?.name}/${response.user?.email}/${response.user?.password}")
                     Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Login failed: ${response.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Login failed: Invalid credentials.", Toast.LENGTH_SHORT).show()
                 }
             }
         } catch (e: Exception) {
@@ -214,6 +251,8 @@ private fun handleLogin(
         }
     }
 }
+
+
 
 
 private fun handleRegistration(

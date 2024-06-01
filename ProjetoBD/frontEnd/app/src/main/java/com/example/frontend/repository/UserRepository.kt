@@ -75,20 +75,3 @@ class UserRepository {
         }
     }
 }
-//    suspend fun loginUser(email: String, password: String): Response<UserResponse> {
-//        val request = UserRequest(name = "", email = email, password = password)
-//        val response = apiService.loginUser(request)
-//        Log.d("ApiResponse", "Request: $request")
-//        Log.d("ApiResponse", "Response: ${response.raw()}")
-//        return response
-//    }
-//
-//    suspend fun searchUser(name: String): Boolean {
-//        val request = UserRequest(name, "", "")
-//        val response = apiService.searchUser(request)
-//        Log.d("ApiResponse", "Request: $request")
-//        Log.d("ApiResponse", "Response: ${response.raw()}")
-//        return response.isSuccessful
-//    }
-//
-//}

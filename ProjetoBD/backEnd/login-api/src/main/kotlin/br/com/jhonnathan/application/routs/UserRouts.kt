@@ -3,6 +3,7 @@ package br.com.jhonnathan.application.routs
 import br.com.jhonnathan.UserSession
 import br.com.jhonnathan.application.request.UserRequest
 import br.com.jhonnathan.application.request.toDomain
+import br.com.jhonnathan.domain.entity.User
 import br.com.jhonnathan.domain.ports.UserRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -35,8 +36,9 @@ fun Route.userRoutes() {
                 return@post call.respond(HttpStatusCode.Unauthorized, "Invalid username or password")
             }
             call.sessions.set(UserSession(userInDb.id.toString()))
-            return@post call.respondText("User logged in successfully", status = HttpStatusCode.OK)
+            return@post call.respond(HttpStatusCode.OK, userInDb)
         }
+
 
         post("/logout") {
             try {
