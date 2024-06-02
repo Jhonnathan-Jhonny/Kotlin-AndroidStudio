@@ -70,56 +70,95 @@ fun InfoScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var user by remember { mutableStateOf(User("","","")) }
+    var user by remember { mutableStateOf(User("", "", "")) }
+    var usingEdit by remember { mutableStateOf(false) }
+
+    // Temporary state variables for text fields
+    var tempName by remember { mutableStateOf("") }
+    var tempEmail by remember { mutableStateOf("") }
+    var tempPassword by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             try {
                 val userInfo = userRepository.getUserInfo()
                 user = userInfo
+                tempName = userInfo.name
+                tempEmail = userInfo.email
+                tempPassword = userInfo.password
             } catch (e: Exception) {
                 Toast.makeText(context, "Failed to load user info: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
     user.let {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(text = "Name: ${it.name}")
-            Text(text = "Email: ${it.email}")
-            Text(
-                text = "Password: ${it.password}",
-                modifier = Modifier.padding(bottom = 10.dp)
+        if (usingEdit) {
+            Column {
+                OutlinedTextField(
+                    value = tempName,
+                    onValueChange = { tempName = it },
+                    label = { Text(text = "Name") }
+                )
+                OutlinedTextField(
+                    value = tempEmail,
+                    onValueChange = { tempEmail = it },
+                    label = { Text(text = "Email") }
+                )
+                OutlinedTextField(
+                    value = tempPassword,
+                    onValueChange = { tempPassword = it },
+                    label = { Text(text = "Password") }
+                )
+                Button(onClick = {
+                    user = user.copy(name = tempName, email = tempEmail, password = tempPassword)
+                    handleEdit(coroutineScope, context, it.name,it.email,it.password)
+                    usingEdit = false
+                }) {
+                    Text(text = "Confirm")
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(text = "Name: ${it.name}")
+                Text(text = "Email: ${it.email}")
+                Text(
+                    text = "Password: ${it.password}",
+                    modifier = Modifier.padding(bottom = 10.dp)
                 )
 
-            Row {
-                Button(onClick = {
-                    handleDelete(coroutineScope,context,it.name,navController)
-                    navController?.navigate("login") {
-                        popUpTo("login") { inclusive = true }
+                Row {
+                    Button(onClick = {
+                        handleDelete(coroutineScope, context, it.name, navController)
+                        navController?.navigate("login") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    }) {
+                        Text(text = "Delete")
                     }
-                }) {
-                    Text(text = "Delete")
-                }
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Edit")
-                }
-                Button(onClick = {
-                    navController?.navigate("login") {
-                        popUpTo("login") { inclusive = true }
-                    }                }) {
-                    Text(text = "Log Out")
+
+                    Button(onClick = { usingEdit = true }) {
+                        Text(text = "Edit")
+                    }
+
+                    Button(onClick = {
+                        navController?.navigate("login") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    }) {
+                        Text(text = "Log Out")
+                    }
                 }
             }
         }
     }
 }
-
 
 
 @Composable
@@ -287,18 +326,44 @@ private fun handleDelete(
             withContext(Dispatchers.Main) {
                 if (response == HttpStatusCode.OK) {
                     navController?.navigate("login")
-                    Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Delete successful!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Registration failed:", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Delete failed:", Toast.LENGTH_SHORT).show()
                 }
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Registration failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Delete failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 }
+
+private fun handleEdit(
+    scope: CoroutineScope,
+    context: Context,
+    name: String,
+    email: String,
+    password: String,
+) {
+    scope.launch {
+        try {
+            val response = userRepository.editUser(name, email, password)
+            withContext(Dispatchers.Main) {
+                if (response == HttpStatusCode.OK) {
+                    Toast.makeText(context, "Edition successful!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Edition failed: ${response.description}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Edition failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable

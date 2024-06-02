@@ -10,7 +10,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import org.bson.types.ObjectId
 import org.koin.ktor.ext.inject
 import org.mindrot.jbcrypt.BCrypt
 
@@ -82,16 +81,17 @@ fun Route.userRoutes() {
             } ?: call.respondText("No records found for name $name")
         }
 
-        put("/edit/{id?}") {
-            val id = call.parameters["id"] ?: return@put call.respondText(
+        put("/edit/{name?}") {
+            val name = call.parameters["name"] ?: return@put call.respondText(
                 text = "Missing fitness id",
                 status = HttpStatusCode.BadRequest
             )
-            val updated = repository.updateUser(ObjectId(id), call.receive())
+            val updated = repository.updateUser(name, call.receive())
             call.respondText(
                 text = if (updated == 1L) "User updated successfully" else "User not found",
                 status = if (updated == 1L) HttpStatusCode.OK else HttpStatusCode.NotFound
             )
         }
+
     }
 }

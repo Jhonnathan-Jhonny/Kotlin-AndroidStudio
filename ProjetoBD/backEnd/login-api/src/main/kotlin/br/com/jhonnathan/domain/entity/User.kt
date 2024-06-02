@@ -7,9 +7,9 @@ import org.bson.types.ObjectId
 data class User (
     @BsonId
     val id: ObjectId,
-    val name:String,
-    val email:String,
-    val password:String
+    var name:String,
+    var email:String,
+    var password:String
 ){
     fun toResponse() = UserResponse(
         id = id.toString(),

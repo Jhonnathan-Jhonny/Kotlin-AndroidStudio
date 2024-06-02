@@ -45,9 +45,9 @@ private val mongoDatabase: MongoDatabase
         return 0
     }
 
-    override suspend fun updateUser(objectId: ObjectId, user: User): Long {
+    override suspend fun updateUser(userName: String, user: User): Long {
         try {
-            val query = Filters.eq("_id", objectId)
+            val query = Filters.eq("name", userName)
             val updates = Updates.combine(
                 Updates.set(User::name.name, user.name),
                 Updates.set(User::email.name, user.email),
@@ -62,7 +62,8 @@ private val mongoDatabase: MongoDatabase
         } catch (e: MongoException) {
             System.err.println("Unable to update due to an error: $e")
         }
-        return 0    }
+        return 0
+    }
 
     override suspend fun findByName(userName: String): User? =
         mongoDatabase.getCollection<User>(USER_COLLECTION).withDocumentClass<User>()
@@ -75,3 +76,4 @@ private val mongoDatabase: MongoDatabase
         .find(Filters.eq("email", email))
         .firstOrNull()
 }
+
