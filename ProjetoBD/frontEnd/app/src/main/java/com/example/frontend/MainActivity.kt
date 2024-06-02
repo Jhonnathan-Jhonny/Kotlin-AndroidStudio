@@ -36,6 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.frontend.repository.User
 import com.example.frontend.repository.UserRepository
 import com.example.frontend.ui.theme.FrontEndTheme
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,7 +70,7 @@ fun InfoScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var user by remember { mutableStateOf<User?>(null) }
+    var user by remember { mutableStateOf(User("","","")) }
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
@@ -81,18 +82,37 @@ fun InfoScreen(
             }
         }
     }
-
-    user?.let {
+    user.let {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start
         ) {
             Text(text = "Name: ${it.name}")
             Text(text = "Email: ${it.email}")
-            Text(text = "Password: ${it.password}")
+            Text(
+                text = "Password: ${it.password}",
+                modifier = Modifier.padding(bottom = 10.dp)
+                )
+
+            Row {
+                Button(onClick = {
+                    
+                }) {
+                    Text(text = "Delete")
+                }
+                Button(onClick = { /*TODO*/ }) {
+                    Text(text = "Edit")
+                }
+                Button(onClick = {
+                    navController?.navigate("login") {
+                        popUpTo("login") { inclusive = true }
+                    }                }) {
+                    Text(text = "Log Out")
+                }
+            }
         }
     }
 }
@@ -225,9 +245,6 @@ private fun handleLogin(
     }
 }
 
-
-
-
 private fun handleRegistration(
     scope: CoroutineScope,
     context: Context,
@@ -254,7 +271,6 @@ private fun handleRegistration(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

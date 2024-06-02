@@ -6,7 +6,6 @@ import br.com.jhonnathan.application.request.toDomain
 import br.com.jhonnathan.domain.ports.UserRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -15,18 +14,15 @@ import org.bson.types.ObjectId
 import org.koin.ktor.ext.inject
 import org.mindrot.jbcrypt.BCrypt
 
+
 fun Route.userRoutes() {
     val repository by inject<UserRepository>()
+    var infoUserLogged = UserRequest("","","")
+
     route("/user") {
 
         get("/me") {
-            val userSession = call.principal<UserSession>()
-            val user = repository.findById(ObjectId(userSession!!.userId))
-            if (user != null) {
-                call.respond(user)
-            } else {
-                call.respond(HttpStatusCode.NotFound, "User not found")
-            }
+            return@get call.respond(infoUserLogged)
         }
 
         post("/register") {
@@ -46,6 +42,7 @@ fun Route.userRoutes() {
             if (userInDb == null || !BCrypt.checkpw(user.password, userInDb.password)) {
                 return@post call.respond(HttpStatusCode.Unauthorized, "Invalid username or password")
             }
+            infoUserLogged = UserRequest(userInDb.name, userInDb.email,userInDb.password)
             call.sessions.set(UserSession(userInDb.id.toString()))
             return@post call.respond(HttpStatusCode.OK, userInDb)
         }
@@ -60,9 +57,9 @@ fun Route.userRoutes() {
             }
         }
 
-        delete("/delete/{id?}") {
-            val id = call.parameters["id"] ?: return@delete call.respondText(
-                text = "Missing user id",
+        delete("/delete/{name?}") {
+            val id = call.parameters["name"] ?: return@delete call.respondText(
+                text = "Missing user name",
                 status = HttpStatusCode.BadRequest
             )
             val delete: Long = repository.delete(ObjectId(id))

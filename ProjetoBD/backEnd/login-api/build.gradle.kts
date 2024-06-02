@@ -46,5 +46,10 @@ dependencies {
     // Test dependencies
     testImplementation("io.ktor:ktor-server-tests-jvm:2.0.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+
+    //Logger
+    implementation("io.github.microutils:kotlin-logging:2.0.11")
+    implementation("ch.qos.logback:logback-classic:1.2.3")
+
 }
 

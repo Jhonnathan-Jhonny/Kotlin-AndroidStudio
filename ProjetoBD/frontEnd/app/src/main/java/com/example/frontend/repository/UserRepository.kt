@@ -79,9 +79,26 @@ class UserRepository {
             RegistrationResponse(false, errorMessage)
         }
     }
+
     suspend fun getUserInfo(): User {
         val apiService = httpClient()
-        val response =  apiService.get("http://10.0.0.169:8081/user/me")
+        val response = apiService.get("http://10.0.0.169:8081/user/me") {
+            contentType(io.ktor.http.ContentType.Application.Json)
+        }
         return response.body()
     }
+
+    suspend fun deleteUser(){
+
+    }
+    suspend fun logOutUser(): HttpStatusCode {
+        val apiService = httpClient()
+        val response = apiService.get("http://10.0.0.169:8081/user/logout") {
+            contentType(io.ktor.http.ContentType.Application.Json)
+        }
+        return response.status
+    }
+
 }
+
+
