@@ -6,7 +6,7 @@ import org.bson.types.ObjectId
 interface UserRepository {
     suspend fun save(user: User): Boolean
     suspend fun findById(objectId: ObjectId): User?
-    suspend fun delete(objectId: ObjectId): Long
+    suspend fun delete(name: String): Long
     suspend fun updateUser(objectId: ObjectId, user: User): Long
     suspend fun findByName(userName: String): User?
     suspend fun findByEmail(email: String): User?

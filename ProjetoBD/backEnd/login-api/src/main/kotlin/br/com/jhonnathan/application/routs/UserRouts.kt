@@ -58,11 +58,11 @@ fun Route.userRoutes() {
         }
 
         delete("/delete/{name?}") {
-            val id = call.parameters["name"] ?: return@delete call.respondText(
+            val name = call.parameters["name"] ?: return@delete call.respondText(
                 text = "Missing user name",
                 status = HttpStatusCode.BadRequest
             )
-            val delete: Long = repository.delete(ObjectId(id))
+            val delete: Long = repository.delete(name)
             if (delete == 1L) {
                 return@delete call.respondText("User Deleted successfully", status = HttpStatusCode.OK)
             }

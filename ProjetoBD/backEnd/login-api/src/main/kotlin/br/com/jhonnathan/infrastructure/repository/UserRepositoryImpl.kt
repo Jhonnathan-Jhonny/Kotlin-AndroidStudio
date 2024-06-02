@@ -35,9 +35,9 @@ private val mongoDatabase: MongoDatabase
     .find(Filters.eq("_id", objectId))
     .firstOrNull()
 
-    override suspend fun delete(objectId: ObjectId): Long {
+    override suspend fun delete(name: String): Long {
         try {
-            val result = mongoDatabase.getCollection<User>(USER_COLLECTION).deleteOne(Filters.eq("_id", objectId))
+            val result = mongoDatabase.getCollection<User>(USER_COLLECTION).deleteOne(Filters.eq("name", name))
             return result.deletedCount
         } catch (e: MongoException) {
             System.err.println("Unable to delete due to an error: $e")

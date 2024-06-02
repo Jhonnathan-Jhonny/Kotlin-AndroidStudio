@@ -99,7 +99,10 @@ fun InfoScreen(
 
             Row {
                 Button(onClick = {
-                    
+                    handleDelete(coroutineScope,context,it.name,navController)
+                    navController?.navigate("login") {
+                        popUpTo("login") { inclusive = true }
+                    }
                 }) {
                     Text(text = "Delete")
                 }
@@ -262,6 +265,31 @@ private fun handleRegistration(
                     Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, "Registration failed: ${response.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Registration failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+}
+
+private fun handleDelete(
+    scope: CoroutineScope,
+    context: Context,
+    name: String,
+    navController: NavController?
+) {
+    scope.launch {
+        try {
+            val response = userRepository.deleteUser(name)
+            withContext(Dispatchers.Main) {
+                if (response == HttpStatusCode.OK) {
+                    navController?.navigate("login")
+                    Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Registration failed:", Toast.LENGTH_SHORT).show()
                 }
             }
         } catch (e: Exception) {

@@ -10,6 +10,7 @@ import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -88,12 +89,16 @@ class UserRepository {
         return response.body()
     }
 
-    suspend fun deleteUser(){
-
+    suspend fun deleteUser(name:String): HttpStatusCode {
+        val apiService = httpClient()
+        val response = apiService.delete("http://10.0.0.169:8081/user/delete/$name") {
+            contentType(io.ktor.http.ContentType.Application.Json)
+        }
+        return response.status
     }
     suspend fun logOutUser(): HttpStatusCode {
         val apiService = httpClient()
-        val response = apiService.get("http://10.0.0.169:8081/user/logout") {
+        val response = apiService.post("http://10.0.0.169:8081/user/logout") {
             contentType(io.ktor.http.ContentType.Application.Json)
         }
         return response.status
