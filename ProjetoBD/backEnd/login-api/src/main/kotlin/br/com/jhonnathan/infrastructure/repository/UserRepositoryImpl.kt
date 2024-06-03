@@ -1,6 +1,5 @@
 package br.com.jhonnathan.infrastructure.repository
 
-import br.com.jhonnathan.application.request.UserRequest
 import br.com.jhonnathan.domain.entity.User
 import br.com.jhonnathan.domain.ports.UserRepository
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
@@ -52,7 +51,6 @@ private val mongoDatabase: MongoDatabase
             val updates = Updates.combine(
                 Updates.set(User::name.name, user.name),
                 Updates.set(User::email.name, user.email),
-                Updates.set(User::password.name, user.password)
             )
             val options = UpdateOptions().upsert(true)
             val result =

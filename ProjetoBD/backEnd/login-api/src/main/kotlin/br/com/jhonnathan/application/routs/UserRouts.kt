@@ -82,26 +82,18 @@ fun Route.userRoutes() {
                 call.respond(it.toResponse())
             } ?: call.respondText("No records found for name $name")
         }
-//        put("/edit/{name?}") {
-//            val name = call.parameters["name"].toString()
-//            val user = call.receive<UserRequest>()
-//            val userExist = repository.findByName(name)
-//            if(userExist != null){
-//                val updated = repository.updateUser(name,user.toDomain())
-//                call.respondText(
-//                    text = if (updated == 1L) "User updated successfully" else "User not found",
-//                    status = if (updated == 1L) HttpStatusCode.OK else HttpStatusCode.NotFound
-//                )
-//            }
-//            return@put call.respond(HttpStatusCode.BadRequest,"User name no exists")
-//        }
 
         put("/edit/{name?}") {
             val name = call.parameters["name"] ?: return@put call.respondText(
                 text = "Missing user name",
                 status = HttpStatusCode.BadRequest
             )
-            val updated = repository.updateUser(name, call.receive<User>())
+            val user = call.receive<User>()
+            val userExist = repository.findByName(user.name)
+            if(userExist != null && userExist.name != name) {
+                return@put call.respond(HttpStatusCode.Conflict,"User name already exists")
+            }
+            val updated = repository.updateUser(name, user)
             call.respondText(
                 text = if (updated == 1L) "User updated successfully" else "User not found",
                 status = if (updated == 1L) HttpStatusCode.OK else HttpStatusCode.NotFound

@@ -34,8 +34,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.model.UserRequest
-import com.example.frontend.model.UserResponse
-import com.example.frontend.repository.User
 import com.example.frontend.repository.UserRepository
 import com.example.frontend.ui.theme.FrontEndTheme
 import io.ktor.http.HttpStatusCode
@@ -78,9 +76,9 @@ fun InfoScreen(
     // Temporary state variables for text fields
     var tempName by remember { mutableStateOf("") }
     var tempEmail by remember { mutableStateOf("") }
-    var tempPassword by remember { mutableStateOf("") }
 
-    var namePrevious: String
+    // Track the previous name
+    var namePrevious by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
@@ -89,83 +87,81 @@ fun InfoScreen(
                 user = userInfo
                 tempName = userInfo.name
                 tempEmail = userInfo.email
-                tempPassword = userInfo.password
+                namePrevious = userInfo.name
             } catch (e: Exception) {
                 Toast.makeText(context, "Failed to load user info: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    user.let {
-        if (usingEdit) {
-            Column {
-                namePrevious = it.name
-                OutlinedTextField(
-                    value = tempName,
-                    onValueChange = { tempName = it },
-                    label = { Text(text = "Name") }
-                )
-                OutlinedTextField(
-                    value = tempEmail,
-                    onValueChange = { tempEmail = it },
-                    label = { Text(text = "Email") }
-                )
-                OutlinedTextField(
-                    value = tempPassword,
-                    onValueChange = { tempPassword = it },
-                    label = { Text(text = "Password") }
-                )
-                Button(onClick = {
-                    user.name = tempName
-                    user.password = tempPassword
-                    user.email = tempEmail
-                    handleEdit(coroutineScope, context, it.name,it.email,it.password, namePrevious)
-                    usingEdit = false
-                }) {
-                    Text(text = "Confirm")
+    if (usingEdit) {
+        Column {
+            OutlinedTextField(
+                value = tempName,
+                onValueChange = { tempName = it },
+                label = { Text(text = "Name") }
+            )
+            OutlinedTextField(
+                value = tempEmail,
+                onValueChange = { tempEmail = it },
+                label = { Text(text = "Email") }
+            )
+            Button(onClick = {
+                handleEdit(coroutineScope, context, tempName, tempEmail, namePrevious) { result ->
+                    result.onSuccess {
+                        // Update the user state and reset the temporary state
+                        user = user.copy(name = tempName, email = tempEmail)
+                        usingEdit = false
+                    }.onFailure {
+                        Toast.makeText(context, "Edition failed: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
                 }
+            }) {
+                Text(text = "Confirm")
             }
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(text = "Name: ${it.name}")
-                Text(text = "Email: ${it.email}")
-                Text(
-                    text = "Password: ${it.password}",
-                    modifier = Modifier.padding(bottom = 10.dp)
-                )
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(text = "Name: ${user.name}")
+            Text(text = "Email: ${user.email}")
+            Text(
+                text = "Password: ${user.password}",
+                modifier = Modifier.padding(bottom = 10.dp)
+            )
 
-                Row {
-                    Button(onClick = {
-                        handleDelete(coroutineScope, context, it.name, navController)
-                        navController?.navigate("login") {
-                            popUpTo("login") { inclusive = true }
-                        }
-                    }) {
-                        Text(text = "Delete")
+            Row {
+                Button(onClick = {
+                    handleDelete(coroutineScope, context, user.name, navController)
+                    navController?.navigate("login") {
+                        popUpTo("login") { inclusive = true }
                     }
+                }) {
+                    Text(text = "Delete")
+                }
 
-                    Button(onClick = { usingEdit = true }) {
-                        Text(text = "Edit")
-                    }
+                Button(onClick = { usingEdit = true }) {
+                    Text(text = "Edit")
+                }
 
-                    Button(onClick = {
-                        navController?.navigate("login") {
-                            popUpTo("login") { inclusive = true }
-                        }
-                    }) {
-                        Text(text = "Log Out")
+                Button(onClick = {
+                    navController?.navigate("login") {
+                        popUpTo("login") { inclusive = true }
                     }
+                }) {
+                    Text(text = "Log Out")
                 }
             }
         }
     }
 }
+
+
 
 
 @Composable
@@ -351,26 +347,29 @@ private fun handleEdit(
     context: Context,
     name: String,
     email: String,
-    password: String,
-    namePrevious: String
+    namePrevious: String,
+    callback: (Result<HttpStatusCode>) -> Unit
 ) {
     scope.launch {
         try {
-            val response = userRepository.editUser(namePrevious, name, email, password)
-            withContext(Dispatchers.Main) {  
+            val response = userRepository.editUser(namePrevious, name, email)
+            withContext(Dispatchers.Main) {
                 if (response == HttpStatusCode.OK) {
                     Toast.makeText(context, "Edition successful!", Toast.LENGTH_SHORT).show()
+                    callback(Result.success(response))
                 } else {
-                    Toast.makeText(context, "Edition failed: $namePrevious atual $name", Toast.LENGTH_SHORT).show()
+                    callback(Result.failure(Exception("Edition failed: Name exist")))
                 }
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
                 Toast.makeText(context, "Edition failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                callback(Result.failure(e))
             }
         }
     }
 }
+
 
 
 @Preview(showBackground = true)
