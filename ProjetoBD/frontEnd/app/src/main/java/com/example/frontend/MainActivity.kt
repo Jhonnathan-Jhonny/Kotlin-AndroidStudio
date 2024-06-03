@@ -33,6 +33,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.frontend.model.UserRequest
+import com.example.frontend.model.UserResponse
 import com.example.frontend.repository.User
 import com.example.frontend.repository.UserRepository
 import com.example.frontend.ui.theme.FrontEndTheme
@@ -70,13 +72,15 @@ fun InfoScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var user by remember { mutableStateOf(User("", "", "")) }
+    var user by remember { mutableStateOf(UserRequest("", "", "")) }
     var usingEdit by remember { mutableStateOf(false) }
 
     // Temporary state variables for text fields
     var tempName by remember { mutableStateOf("") }
     var tempEmail by remember { mutableStateOf("") }
     var tempPassword by remember { mutableStateOf("") }
+
+    var namePrevious: String
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
@@ -95,6 +99,7 @@ fun InfoScreen(
     user.let {
         if (usingEdit) {
             Column {
+                namePrevious = it.name
                 OutlinedTextField(
                     value = tempName,
                     onValueChange = { tempName = it },
@@ -111,8 +116,10 @@ fun InfoScreen(
                     label = { Text(text = "Password") }
                 )
                 Button(onClick = {
-                    user = user.copy(name = tempName, email = tempEmail, password = tempPassword)
-                    handleEdit(coroutineScope, context, it.name,it.email,it.password)
+                    user.name = tempName
+                    user.password = tempPassword
+                    user.email = tempEmail
+                    handleEdit(coroutineScope, context, it.name,it.email,it.password, namePrevious)
                     usingEdit = false
                 }) {
                     Text(text = "Confirm")
@@ -345,15 +352,16 @@ private fun handleEdit(
     name: String,
     email: String,
     password: String,
+    namePrevious: String
 ) {
     scope.launch {
         try {
-            val response = userRepository.editUser(name, email, password)
-            withContext(Dispatchers.Main) {
+            val response = userRepository.editUser(namePrevious, name, email, password)
+            withContext(Dispatchers.Main) {  
                 if (response == HttpStatusCode.OK) {
                     Toast.makeText(context, "Edition successful!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Edition failed: ${response.description}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Edition failed: $namePrevious atual $name", Toast.LENGTH_SHORT).show()
                 }
             }
         } catch (e: Exception) {
@@ -369,8 +377,8 @@ private fun handleEdit(
 @Composable
 fun GreetingPreview() {
     FrontEndTheme {
-        //LoginScreen()
-        InfoScreen()
+        LoginScreen()
+        //InfoScreen()
         //RegistrationScreen()
     }
 }

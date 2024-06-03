@@ -1,6 +1,7 @@
 package com.example.frontend.repository
 
 import com.example.frontend.model.UserRequest
+import com.example.frontend.model.UserResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -82,7 +83,7 @@ class UserRepository {
         }
     }
 
-    suspend fun getUserInfo(): User {
+    suspend fun getUserInfo(): UserRequest {
         val apiService = httpClient()
         val response = apiService.get("http://10.0.0.169:8081/user/me") {
             contentType(io.ktor.http.ContentType.Application.Json)
@@ -105,23 +106,15 @@ class UserRepository {
         return response.status
     }
 
-    suspend fun editUser(name: String, email: String, password: String): HttpStatusCode {
+    suspend fun editUser(namePrevious:String,name: String, email: String, password: String): HttpStatusCode {
         val apiService = httpClient()
         val request = UserRequest(name, email, password)
-        val response = apiService.put("http://10.0.0.169:8081/user/edit/$name") {
+        val response = apiService.put("http://10.0.0.169:8081/user/edit/$namePrevious") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(request)
         }
         return response.status
     }
-//    suspend fun registerUser(name: String, email: String, password: String): RegistrationResponse {
-//        val apiService = httpClient()
-//        val request = UserRequest(name, email, password)
-//        val response: HttpResponse = apiService.post("http://10.0.0.169:8081/user/register") {
-//            contentType(io.ktor.http.ContentType.Application.Json)
-//            setBody(request)
-//        }
-
 }
 
 

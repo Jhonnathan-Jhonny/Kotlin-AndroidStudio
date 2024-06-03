@@ -1,5 +1,6 @@
 package br.com.jhonnathan.infrastructure.repository
 
+import br.com.jhonnathan.application.request.UserRequest
 import br.com.jhonnathan.domain.entity.User
 import br.com.jhonnathan.domain.ports.UserRepository
 import com.mongodb.kotlin.client.coroutine.MongoDatabase

@@ -3,6 +3,7 @@ package br.com.jhonnathan.application.routs
 import br.com.jhonnathan.UserSession
 import br.com.jhonnathan.application.request.UserRequest
 import br.com.jhonnathan.application.request.toDomain
+import br.com.jhonnathan.domain.entity.User
 import br.com.jhonnathan.domain.ports.UserRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -12,6 +13,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import org.koin.ktor.ext.inject
 import org.mindrot.jbcrypt.BCrypt
+
 
 
 fun Route.userRoutes() {
@@ -80,13 +82,26 @@ fun Route.userRoutes() {
                 call.respond(it.toResponse())
             } ?: call.respondText("No records found for name $name")
         }
+//        put("/edit/{name?}") {
+//            val name = call.parameters["name"].toString()
+//            val user = call.receive<UserRequest>()
+//            val userExist = repository.findByName(name)
+//            if(userExist != null){
+//                val updated = repository.updateUser(name,user.toDomain())
+//                call.respondText(
+//                    text = if (updated == 1L) "User updated successfully" else "User not found",
+//                    status = if (updated == 1L) HttpStatusCode.OK else HttpStatusCode.NotFound
+//                )
+//            }
+//            return@put call.respond(HttpStatusCode.BadRequest,"User name no exists")
+//        }
 
         put("/edit/{name?}") {
             val name = call.parameters["name"] ?: return@put call.respondText(
-                text = "Missing fitness id",
+                text = "Missing user name",
                 status = HttpStatusCode.BadRequest
             )
-            val updated = repository.updateUser(name, call.receive())
+            val updated = repository.updateUser(name, call.receive<User>())
             call.respondText(
                 text = if (updated == 1L) "User updated successfully" else "User not found",
                 status = if (updated == 1L) HttpStatusCode.OK else HttpStatusCode.NotFound

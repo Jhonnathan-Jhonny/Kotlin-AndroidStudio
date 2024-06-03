@@ -1,5 +1,7 @@
 package br.com.jhonnathan.domain.ports
 
+import br.com.jhonnathan.application.request.UserRequest
+import br.com.jhonnathan.application.response.UserResponse
 import br.com.jhonnathan.domain.entity.User
 import org.bson.types.ObjectId
 
