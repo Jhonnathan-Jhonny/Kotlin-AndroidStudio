@@ -8,17 +8,14 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,11 +34,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -82,21 +82,20 @@ fun MyApp() {
         composable("information") { InfoScreen(navController) }
     }
 }
-
 @Composable
 fun InfoScreen(
     navController: NavController? = null
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
     var user by remember { mutableStateOf(UserRequest("", "", "")) }
     var usingEdit by remember { mutableStateOf(false) }
 
-    // Temporary state variables for text fields
     var tempName by remember { mutableStateOf("") }
     var tempEmail by remember { mutableStateOf("") }
+    var tempPassword by remember { mutableStateOf("") }
 
-    // Track the previous name
     var namePrevious by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
@@ -106,101 +105,164 @@ fun InfoScreen(
                 user = userInfo
                 tempName = userInfo.name
                 tempEmail = userInfo.email
-                namePrevious = userInfo.name
+                tempPassword = userInfo.password
             } catch (e: Exception) {
                 Toast.makeText(context, "Failed to load user info: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    Column(
-        modifier = Modifier
-            .background(colorResource(id = R.color.verdePrincipal))
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.registration_image),
-            contentDescription = "Image",
-            modifier = Modifier
-                .size(100.dp)
-                .align(Alignment.CenterHorizontally)
-        )
-        Text(
-            text = "Name: ${user.name}",
-            fontSize = 20.sp,
-            color = Color.Black,
-            modifier = Modifier
-                .padding(start = 16.dp)
-                .padding(top = 30.dp)
-        )
-        Text(
-            text = "Email: ${user.email}",
-            fontSize = 20.sp,
-            color = Color.Black,
-            modifier = Modifier.padding(start = 16.dp, top= 10.dp)
-        )
-        Text(
-            text = "Password: ${user.password}",
-            fontSize = 20.sp,
-            color = Color.Black,
-            modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top= 10.dp)
-        )
+    if (usingEdit) {
+        namePrevious = user.name
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .background(colorResource(id = R.color.verdePrincipal))
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                onClick = {
-                    handleDelete(coroutineScope, context, user.name, navController)
-                    navController?.navigate("login") {
-                        popUpTo("login") { inclusive = true }
-                    }
+            Image(
+                painter = painterResource(id = R.drawable.registration_image),
+                contentDescription = "Image",
+                modifier = Modifier
+                    .size(150.dp)
+                    .padding(bottom = 30.dp)
+            )
+            OutlinedTextField(
+                value = tempName,
+                onValueChange = { tempName = it },
+                label = { Text(text = "Name") },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_person_24),
+                        contentDescription = "Icon email"
+                    )
                 },
-                Modifier
-                    .padding(bottom = 30.dp)
-                    .size(200.dp, 50.dp),
-                colors = ButtonDefaults.run { buttonColors(Color(R.color.verdeSecundário)) }
-
-            ) {
-                Text(text = "Delete",
-                    fontSize = 20.sp
-                )
-            }
-
-            Button(
-                onClick = { usingEdit = true },
-                Modifier
-                    .padding(bottom = 30.dp)
-                    .size(200.dp, 50.dp),
-                colors = ButtonDefaults.run { buttonColors(Color(R.color.verdeSecundário)) }
-            ) {
-                Text(text = "Edit",
-                fontSize = 20.sp)
-
-            }
-
-            Button(
-                onClick = {
-                    navController?.navigate("login") {
-                        popUpTo("login") { inclusive = true }
-                    }
+            )
+            OutlinedTextField(
+                value = tempEmail,
+                onValueChange = { tempEmail = it },
+                label = { Text(text = "Email") },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_email_24),
+                        contentDescription = "Icon email"
+                    )
                 },
-                Modifier
-                    .padding(bottom = 30.dp)
-                    .size(200.dp, 50.dp),
-                colors = ButtonDefaults.run { buttonColors(Color(R.color.verdeSecundário)) }
-            ) {
-                Text(text = "Log Out",
-                fontSize = 20.sp)
 
+            )
+            Button(onClick = {
+                tempPassword = user.password
+                handleEdit(coroutineScope, context, tempName, tempEmail,tempPassword, namePrevious) { result ->
+                    result.onSuccess {
+                        user = user.copy(name = tempName, email = tempEmail, password = tempPassword)
+                        usingEdit = false
+                    }.onFailure {
+                        Toast.makeText(context, "${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            },
+            Modifier
+                .padding(top=30.dp,bottom = 30.dp)
+                .size(200.dp, 50.dp),
+            colors = ButtonDefaults.run { buttonColors(Color(R.color.verdeSecundário)) },
+
+
+            ) {
+                Text(text = "Confirm")
             }
         }
+    }
+    else {
+        Column(
+            modifier = Modifier
+                .background(colorResource(id = R.color.verdePrincipal))
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.registration_image),
+                contentDescription = "Image",
+                modifier = Modifier
+                    .size(100.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
 
+            Text(
+                text = "Name: ${user.name}",
+                fontSize = 20.sp,
+                color = Color.Black,
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .padding(top = 30.dp)
+            )
+            Text(
+                text = "Email: ${user.email}",
+                fontSize = 20.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(start = 16.dp, top= 10.dp)
+            )
+            Text(
+                text = "Password: ${user.password}",
+                fontSize = 20.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(start = 16.dp, bottom = 10.dp, top= 10.dp)
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Button(
+                    onClick = {
+                        handleDelete(coroutineScope, context, user.name, navController)
+                        navController?.navigate("login") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    },
+                    Modifier
+                        .padding(bottom = 30.dp)
+                        .size(200.dp, 50.dp),
+                    colors = ButtonDefaults.run { buttonColors(Color(R.color.verdeSecundário)) }
+
+                ) {
+                    Text(text = "Delete",
+                        fontSize = 20.sp
+                    )
+                }
+                Button(
+                    onClick = { usingEdit = true },
+                    Modifier
+                        .padding(bottom = 30.dp)
+                        .size(200.dp, 50.dp),
+                    colors = ButtonDefaults.run { buttonColors(Color(R.color.verdeSecundário)) }
+                ) {
+                    Text(text = "Edit",
+                        fontSize = 20.sp)
+
+                }
+
+                Button(
+                    onClick = {
+                        navController?.navigate("login") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    },
+                    Modifier
+                        .padding(bottom = 30.dp)
+                        .size(200.dp, 50.dp),
+                    colors = ButtonDefaults.run { buttonColors(Color(R.color.verdeSecundário)) }
+                ) {
+                    Text(text = "Log Out",
+                        fontSize = 20.sp)
+
+                }
+            }
+        }
     }
 }
 
@@ -212,6 +274,7 @@ fun LoginScreen(navController: NavController? = null) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    val passwordFocusRequester = remember { FocusRequester() }
 
     Column(
         modifier = Modifier
@@ -247,6 +310,9 @@ fun LoginScreen(navController: NavController? = null) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
+                keyboardActions = KeyboardActions(
+                    onNext = { passwordFocusRequester.requestFocus() }
+                ),
                 leadingIcon = {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_email_24),
@@ -254,7 +320,8 @@ fun LoginScreen(navController: NavController? = null) {
                     )
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Email
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
                 )
             )
 
@@ -262,9 +329,10 @@ fun LoginScreen(navController: NavController? = null) {
                 value = password,
                 onValueChange = { password = it },
                 label = { Text("Password") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .focusRequester(passwordFocusRequester),
                 leadingIcon = {
-                    Icon(
+                Icon(
                         painter = painterResource(id = R.drawable.baseline_lock_outline_24),
                         contentDescription = "Icon password"
                     )
@@ -281,7 +349,8 @@ fun LoginScreen(navController: NavController? = null) {
                 },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Password
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Go,
                 )
             )
         }
@@ -345,11 +414,16 @@ fun LoginScreen(navController: NavController? = null) {
 fun RegistrationScreen(navController: NavController? = null) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    var passwordVisible by remember { mutableStateOf(false) }
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var erro by remember { mutableIntStateOf(1) }
+
+    val nameFocusRequester = remember { FocusRequester() }
+    val emailFocusRequester = remember { FocusRequester() }
+    val passwordFocusRequester = remember { FocusRequester() }
 
     Column(
         modifier = Modifier
@@ -362,7 +436,7 @@ fun RegistrationScreen(navController: NavController? = null) {
         Image(
             painter = painterResource(id = R.drawable.registration_image),
             contentDescription = "Image",
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier.size(200.dp),
         )
 
         OutlinedTextField(
@@ -370,6 +444,19 @@ fun RegistrationScreen(navController: NavController? = null) {
             onValueChange = { name = it },
             label = { Text("Name") },
             modifier = Modifier.fillMaxWidth()
+                .focusRequester(nameFocusRequester),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { emailFocusRequester.requestFocus() }
+            ),
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_person_24),
+                    contentDescription = "Icon password"
+                )
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -379,6 +466,19 @@ fun RegistrationScreen(navController: NavController? = null) {
             onValueChange = { email = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
+                .focusRequester(emailFocusRequester),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { passwordFocusRequester.requestFocus() }
+            ),
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_email_24),
+                    contentDescription = "Icon password"
+                )
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -388,6 +488,29 @@ fun RegistrationScreen(navController: NavController? = null) {
             onValueChange = { password = it },
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth()
+                .focusRequester(passwordFocusRequester),
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_lock_outline_24),
+                    contentDescription = "Icon password"
+                )
+            },
+            trailingIcon = {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        painter = painterResource(
+                            id = if (passwordVisible) R.drawable.eye else R.drawable.eye_visible_off
+                        ),
+                        contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                    )
+                }
+            },
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Go
+            )
+
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -420,13 +543,14 @@ fun RegistrationScreen(navController: NavController? = null) {
                 }
             },
             Modifier
-                .padding(bottom = 30.dp,top=20.dp)
+                .padding(bottom = 30.dp, top = 20.dp)
                 .size(110.dp, 50.dp)
                 .align(Alignment.Start),
             colors = ButtonDefaults.run { buttonColors(Color.Transparent) }
         ) {
             Text(text = "Voltar",
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color = Color.Black
             )
 
         }
@@ -516,12 +640,13 @@ private fun handleEdit(
     context: Context,
     name: String,
     email: String,
+    password: String,
     namePrevious: String,
     callback: (Result<HttpStatusCode>) -> Unit
 ) {
     scope.launch {
         try {
-            val response = userRepository.editUser(namePrevious, name, email)
+            val response = userRepository.editUser(namePrevious, name, email, password)
             withContext(Dispatchers.Main) {
                 if (response == HttpStatusCode.OK) {
                     Toast.makeText(context, "Edition successful!", Toast.LENGTH_SHORT).show()
@@ -546,7 +671,7 @@ private fun handleEdit(
 fun GreetingPreview() {
     FrontEndTheme {
         //LoginScreen()
-        //InfoScreen()
-        RegistrationScreen()
+        InfoScreen()
+//        RegistrationScreen()
     }
 }

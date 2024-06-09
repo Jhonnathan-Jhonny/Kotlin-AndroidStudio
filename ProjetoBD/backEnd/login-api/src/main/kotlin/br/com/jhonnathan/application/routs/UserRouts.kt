@@ -89,14 +89,16 @@ fun Route.userRoutes() {
                 status = HttpStatusCode.BadRequest
             )
             val user = call.receive<User>()
-            val userExist = repository.findByName(user.name)
-            if(userExist != null && userExist.name != name) {
-                return@put call.respond(HttpStatusCode.Conflict,"User name already exists")
+
+            val existingUser = repository.findByName(user.name)
+            if (existingUser != null && existingUser.name != name) {
+                return@put call.respond(HttpStatusCode.Conflict, "User name already exists")
             }
+
             val updated = repository.updateUser(name, user)
             call.respondText(
-                text = if (updated == 1L) "User updated successfully" else "User not found",
-                status = if (updated == 1L) HttpStatusCode.OK else HttpStatusCode.NotFound
+                text = if (updated) "User updated successfully" else "User not found",
+                status = if (updated) HttpStatusCode.OK else HttpStatusCode.NotFound
             )
         }
 

@@ -8,6 +8,7 @@ import com.mongodb.client.model.Filters
 import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.model.Updates
 import kotlinx.coroutines.flow.firstOrNull
+import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 
 
@@ -45,24 +46,35 @@ private val mongoDatabase: MongoDatabase
         return 0
     }
 
-    override suspend fun updateUser(userName: String, user: User): Long {
+    override suspend fun updateUser(userName: String, user: User): Boolean {
         try {
             val query = Filters.eq("name", userName)
-            val updates = Updates.combine(
-                Updates.set(User::name.name, user.name),
-                Updates.set(User::email.name, user.email),
-            )
-            val options = UpdateOptions().upsert(true)
-            val result =
-                mongoDatabase.getCollection<User>(USER_COLLECTION)
-                    .updateOne(query, updates, options)
+            val updates = mutableListOf<Bson>()
 
-            return result.modifiedCount
+            if (user.name.isNotEmpty() && userName != user.name) {
+                updates.add(Updates.set(User::name.name, user.name))
+            }
+            if (user.email.isNotEmpty()) {
+                updates.add(Updates.set(User::email.name, user.email))
+            }
+            if (user.password.isNotEmpty()) {
+                updates.add(Updates.set(User::password.name, user.password))
+            }
+
+
+            if (updates.isNotEmpty()) {
+                val combinedUpdates = Updates.combine(updates)
+                val options = UpdateOptions().upsert(false)
+                val result = mongoDatabase.getCollection<User>(USER_COLLECTION)
+                    .updateOne(query, combinedUpdates, options)
+                return result.matchedCount > 0
+            }
         } catch (e: MongoException) {
             System.err.println("Unable to update due to an error: $e")
         }
-        return 0
+        return false
     }
+
 
     override suspend fun findByName(userName: String): User? =
         mongoDatabase.getCollection<User>(USER_COLLECTION).withDocumentClass<User>()

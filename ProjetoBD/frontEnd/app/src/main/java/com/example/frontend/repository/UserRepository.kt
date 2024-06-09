@@ -31,6 +31,9 @@ data class RegistrationResponse(val status: Boolean, val message: String, val us
 
 class UserRepository {
 
+//    val caminho = "http://10.0.0.169:8081"
+    val caminho = "http://192.168.62.222:8081"
+
     private fun httpClient(): HttpClient {
         return HttpClient(Android) {
             install(HttpCookies) {
@@ -53,7 +56,7 @@ class UserRepository {
     suspend fun registerUser(name: String, email: String, password: String): RegistrationResponse {
         val apiService = httpClient()
         val request = UserRequest(name, email, password)
-        val response: HttpResponse = apiService.post("http://10.0.0.169:8081/user/register") {
+        val response: HttpResponse = apiService.post("$caminho/user/register") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(request)
         }
@@ -69,7 +72,7 @@ class UserRepository {
     suspend fun loginUser(email: String, password: String): RegistrationResponse {
         val apiService = httpClient()
         val request = UserRequest("", email, password)
-        val response: HttpResponse = apiService.post("http://10.0.0.169:8081/user/login") {
+        val response: HttpResponse = apiService.post("$caminho/user/login") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(request)
         }
@@ -84,7 +87,7 @@ class UserRepository {
 
     suspend fun getUserInfo(): UserRequest {
         val apiService = httpClient()
-        val response = apiService.get("http://10.0.0.169:8081/user/me") {
+        val response = apiService.get("$caminho/user/me") {
             contentType(io.ktor.http.ContentType.Application.Json)
         }
         return response.body()
@@ -92,23 +95,23 @@ class UserRepository {
 
     suspend fun deleteUser(name:String): HttpStatusCode {
         val apiService = httpClient()
-        val response = apiService.delete("http://10.0.0.169:8081/user/delete/$name") {
+        val response = apiService.delete("$caminho/user/delete/$name") {
             contentType(io.ktor.http.ContentType.Application.Json)
         }
         return response.status
     }
     suspend fun logOutUser(): HttpStatusCode {
         val apiService = httpClient()
-        val response = apiService.post("http://10.0.0.169:8081/user/logout") {
+        val response = apiService.post("$caminho/user/logout") {
             contentType(io.ktor.http.ContentType.Application.Json)
         }
         return response.status
     }
 
-    suspend fun editUser(namePrevious:String,name: String, email: String): HttpStatusCode {
+    suspend fun editUser(namePrevious:String,name: String, email: String, password: String): HttpStatusCode {
         val apiService = httpClient()
-        val request = UserRequest(name, email, "")
-        val response = apiService.put("http://10.0.0.169:8081/user/edit/$namePrevious") {
+        val request = UserRequest(name, email, password)
+        val response = apiService.put("$caminho/user/edit/$namePrevious") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(request)
         }
