@@ -31,8 +31,8 @@ data class RegistrationResponse(val status: Boolean, val message: String, val us
 
 class UserRepository {
 
-//    val caminho = "http://10.0.0.169:8081"
-    val caminho = "http://192.168.62.222:8081"
+    val caminho = "http://10.0.0.169:8081"
+//    val caminho = "http://192.168.62.222:8081"
 
     private fun httpClient(): HttpClient {
         return HttpClient(Android) {
