@@ -54,7 +54,8 @@ fun WoofView(dataDog: DataDog, modifier: Modifier = Modifier){
     Card(modifier = Modifier.padding(8.dp)) {
         Row (
             modifier = Modifier
-                .padding(8.dp),
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ){
             Image(
                 painter = painterResource(id = dataDog.imageResourceId),
@@ -73,7 +74,6 @@ fun WoofView(dataDog: DataDog, modifier: Modifier = Modifier){
                     text = stringResource(id = dataDog.name),
                     style = MaterialTheme.typography.displayMedium,
                     modifier = Modifier
-                        .padding(top = 8.dp),
                 )
                 Text(
                     text = "${dataDog.age} years old",
