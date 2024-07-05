@@ -5,13 +5,26 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.StringRes
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,38 +64,66 @@ fun WoofApp() {
 
 @Composable
 fun WoofView(dataDog: DataDog, modifier: Modifier = Modifier){
+    var expanded by remember { mutableStateOf(false) }
+    val color by animateColorAsState(
+        targetValue =
+            if (expanded) MaterialTheme.colorScheme.tertiaryContainer
+            else MaterialTheme.colorScheme.primaryContainer
+    )
+
     Card(modifier = Modifier.padding(8.dp)) {
-        Row (
+        Column(
             modifier = Modifier
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Image(
-                painter = painterResource(id = dataDog.imageResourceId),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(CircleShape),
-            )
-            Column(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
-            ) {
-                Text(
-                    text = stringResource(id = dataDog.name),
-                    style = MaterialTheme.typography.displayMedium,
-                    modifier = Modifier
+                .animateContentSize(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
                 )
-                Text(
-                    text = "${dataDog.age} years old",
-                    style = MaterialTheme.typography.bodyLarge,
+                .background(color = color)
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = dataDog.imageResourceId),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape),
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = stringResource(id = dataDog.name),
+                        style = MaterialTheme.typography.displayMedium,
+                    )
+                    Text(
+                        text = "${dataDog.age} years old",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+                WoofButton(
+                    expanded = expanded,
+                    onClick = { expanded = !expanded }
+                )
+            }
+            if (expanded){
+                DogHobby(
+                    dataDog.hobbies,
+                    modifier = Modifier.padding(16.dp,8.dp,16.dp,16.dp)
                 )
             }
         }
     }
 }
+
 
 @Composable
 fun WoofList(modifier: Modifier = Modifier){
@@ -118,6 +159,42 @@ fun WoofTopAppBar(modifier: Modifier = Modifier){
             }
         },
     )
+}
+
+@Composable
+fun WoofButton(
+    expanded: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    IconButton(
+        onClick = onClick
+    ) {
+        Icon(
+            imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.secondary
+        )
+    }
+}
+
+@Composable
+fun DogHobby(
+    @StringRes dogHobby: Int,
+    modifier: Modifier = Modifier
+){
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = stringResource(R.string.about),
+            style = MaterialTheme.typography.labelSmall
+        )
+        Text(
+            text = stringResource(dogHobby),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 }
 
 @Preview
