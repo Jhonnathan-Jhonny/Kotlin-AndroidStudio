@@ -6,11 +6,10 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.example.materialdesignpratica.R
 
 val Cabin = FontFamily(
-//    Font(R.font., FontWeight.Normal),
-//    Font(R.font., FontWeight.Bold)
+//    Font(FontFamily.Serif, FontWeight.Normal),
+//    Font(FontFamily., FontWeight.Bold)
 )
 // Set of Material typography styles to start with
 val Typography = Typography(
