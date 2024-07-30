@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -55,10 +56,11 @@ class MainActivity : ComponentActivity() {
 fun HeroesApp() {
     Scaffold(
         topBar = { TopAppBar() },
-    ) {
-        HeroesList()
+    ) { innerPadding ->
+        HeroesList(modifier = Modifier.padding(innerPadding))
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,6 +70,13 @@ fun TopAppBar() {
             Row (
                 verticalAlignment = Alignment.CenterVertically,
             ){
+                Image(
+                    painter = painterResource(id = R.drawable.herois),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .size(50.dp)
+                )
                 Text(
                     text = "Heroes",
                     style = MaterialTheme.typography.headlineSmall,
@@ -111,8 +120,10 @@ fun HeroesScreen(hero: Hero, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HeroesList(){
-    LazyColumn {
+fun HeroesList(modifier: Modifier) {
+    LazyColumn (
+        modifier = modifier
+    ){
         items(heroes) { hero ->
             HeroesScreen(hero = hero)
         }
@@ -122,7 +133,7 @@ fun HeroesList(){
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    MaterialDesignPraticaTheme {
+    MaterialDesignPraticaTheme(darkTheme = true) {
 //        HeroesScreen(  Hero(
 //            nameRes = R.string.hero3,
 //            descriptionRes = R.string.description3,

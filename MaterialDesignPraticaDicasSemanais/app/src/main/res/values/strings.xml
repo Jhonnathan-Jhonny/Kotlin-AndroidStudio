@@ -1,0 +1,17 @@
+<resources>
+    <string name="segunda_feira">Segunda-feira</string>
+    <string name="terca_feira">Terça-feira</string>
+    <string name="quarta_feira">Quarta-feira</string>
+    <string name="quinta_feira">Quinta-feira</string>
+    <string name="sexta_feira">Sexta-feira</string>
+    <string name="sabado">Sábado</string>
+    <string name="domingo">Domingo</string>
+
+    <string name="comece_a_semana_com_energia_e_determinacao">Comece a semana com energia e determinação!</string>
+    <string name="acredite_em_si_mesmo">Acredite em si mesmo e em todo o seu potencial.</string>
+    <string name="mantenha_o_foco">Mantenha o foco e continue avançando.</string>
+    <string name="tente_algo_novo">Nunca é tarde para tentar algo novo.</string>
+    <string name="celebre_conquistas">Celebre suas conquistas e planeje o futuro.</string>
+    <string name="descanse_recarregue">Descanse, recarregue e prepare-se para novos desafios.</string>
+    <string name="aprecie_o_momento">Aprecie o momento e seja grato por tudo.</string>
+</resources>
