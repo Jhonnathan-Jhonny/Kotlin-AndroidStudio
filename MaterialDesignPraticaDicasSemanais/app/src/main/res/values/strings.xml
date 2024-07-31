@@ -1,4 +1,6 @@
 <resources>
+    <string name="app_name">MaterialDesign</string>
+
     <string name="segunda_feira">Segunda-feira</string>
     <string name="terca_feira">Terça-feira</string>
     <string name="quarta_feira">Quarta-feira</string>
