@@ -3,6 +3,7 @@
 package com.example.materialdesignpraticadicassemanais
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,19 +32,52 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.materialdesignpraticadicassemanais.data.DataSource
+import com.example.materialdesignpraticadicassemanais.data.Dados
 import com.example.materialdesignpraticadicassemanais.data.dataSourceList
 import com.example.materialdesignpraticadicassemanais.ui.theme.MaterialDesignPraticaDicasSemanaisTheme
 
+
+private const val TAG = "MainActivity"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG,"onCreate Called")
         enableEdgeToEdge()
         setContent {
             MaterialDesignPraticaDicasSemanaisTheme {
                 DayApp()
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG,"onStart Called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume Called")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Log.d(TAG, "onRestart Called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause Called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop Called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy Called")
     }
 }
 
@@ -57,7 +90,7 @@ fun DayApp(){
 }
 
 @Composable
-fun DayView(dataSource: DataSource,modifier: Modifier = Modifier){
+fun DayView(dataSource: Dados, modifier: Modifier = Modifier){
     var expanded by remember { mutableStateOf(false) }
     Card{
         Column {
