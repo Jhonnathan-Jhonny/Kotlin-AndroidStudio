@@ -19,7 +19,7 @@ class GameViewModel : ViewModel() {
 
     // Game UI state
     private val _uiState = MutableStateFlow(GameUiState())
-    val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<GameUiState> = _uiState.asStateFlow() //StateFlowé um fluxo observável de detentor de dados que emite as atualizações de estado atual e novo
 
     var userGuess by mutableStateOf("")
         private set
@@ -103,6 +103,8 @@ class GameViewModel : ViewModel() {
         }
     }
 
+
+    //embaralha a palavra
     private fun shuffleCurrentWord(word: String): String {
         val tempWord = word.toCharArray()
         // Scramble the word
@@ -113,6 +115,8 @@ class GameViewModel : ViewModel() {
         return String(tempWord)
     }
 
+
+    //sorteia a palavra
     private fun pickRandomWordAndShuffle(): String {
         // Continue picking up a new random word until you get one that hasn't been used before
         currentWord = allWords.random()
