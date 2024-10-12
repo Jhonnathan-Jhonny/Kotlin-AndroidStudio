@@ -42,8 +42,14 @@ import com.example.viewmodelpratica_jogoformeapalavra.R
 import com.example.viewmodelpratica_jogoformeapalavra.ui.theme.ViewModelPraticaJogoFormeAPalavraTheme
 
 @Composable
+//Essa abordagem garante que sempre que houver uma alteração no uiStatevalor,
+// a recomposição ocorra para os elementos que podem ser compostos usando o gameUiStatevalor.
 fun GameScreen(gameViewModel: GameViewModel = GameViewModel()) {
-    val gameUiState by gameViewModel.uiState.collectAsState()
+    //A collectAsState()função coleta valores de this StateFlowe representa
+    // seu valor mais recente via State. O StateFlow.valueé usado como um valor inicial.
+    // Toda vez que houver um novo valor postado em StateFlow, o retornado Stateatualiza, causando
+    // recomposição de cada State.value.
+    val gameUiState by gameViewModel.uiState.collectAsState() //use a instância do ViewModel para acessar o uiState
     val mediumPadding = 16.dp
 
     Column(
