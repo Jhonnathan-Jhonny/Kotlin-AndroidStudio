@@ -1,3 +1,39 @@
 <resources>
     <string name="app_name">Prática-ViewModel-listaRolável</string>
+
+    <!-- Números de telefone fictícios dos usuários no padrão brasileiro -->
+    <string name="user1_number">+55 (11) 91234-5678</string>
+    <string name="user2_number">+55 (21) 92345-6789</string>
+    <string name="user3_number">+55 (31) 93456-7890</string>
+    <string name="user4_number">+55 (41) 94567-8901</string>
+    <string name="user5_number">+55 (51) 95678-9012</string>
+    <string name="user6_number">+55 (61) 96789-0123</string>
+    <string name="user7_number">+55 (71) 97890-1234</string>
+    <string name="user8_number">+55 (81) 98901-2345</string>
+    <string name="user9_number">+55 (91) 90012-3456</string>
+    <string name="user10_number">+55 (19) 91123-4567</string>
+
+    <!-- Primeiro nome dos usuários -->
+    <string name="user1_first_name">John</string>
+    <string name="user2_first_name">Emma</string>
+    <string name="user3_first_name">Michael</string>
+    <string name="user4_first_name">Sophia</string>
+    <string name="user5_first_name">James</string>
+    <string name="user6_first_name">Olivia</string>
+    <string name="user7_first_name">William</string>
+    <string name="user8_first_name">Ava</string>
+    <string name="user9_first_name">Ethan</string>
+    <string name="user10_first_name">Mia</string>
+
+    <!-- Último nome dos usuários -->
+    <string name="user1_last_name">Doe</string>
+    <string name="user2_last_name">Smith</string>
+    <string name="user3_last_name">Johnson</string>
+    <string name="user4_last_name">Brown</string>
+    <string name="user5_last_name">Williams</string>
+    <string name="user6_last_name">Jones</string>
+    <string name="user7_last_name">Miller</string>
+    <string name="user8_last_name">Davis</string>
+    <string name="user9_last_name">Garcia</string>
+    <string name="user10_last_name">Martinez</string>
 </resources>
