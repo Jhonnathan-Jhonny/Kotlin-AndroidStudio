@@ -63,12 +63,12 @@ fun WoofApp() {
 }
 
 @Composable
-fun WoofView(dataDog: DataDog, modifier: Modifier = Modifier){
+fun WoofView(dataDog: DataDog){
     var expanded by remember { mutableStateOf(false) }
     val color by animateColorAsState(
         targetValue =
             if (expanded) MaterialTheme.colorScheme.tertiaryContainer
-            else MaterialTheme.colorScheme.primaryContainer
+            else MaterialTheme.colorScheme.primaryContainer, label = ""
     )
 
     Card(modifier = Modifier.padding(8.dp)) {
@@ -139,7 +139,7 @@ fun WoofList(modifier: Modifier = Modifier){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WoofTopAppBar(modifier: Modifier = Modifier){
+fun WoofTopAppBar(){
     CenterAlignedTopAppBar(
         title = {
             Row(
@@ -165,7 +165,6 @@ fun WoofTopAppBar(modifier: Modifier = Modifier){
 fun WoofButton(
     expanded: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
 ){
     IconButton(
         onClick = onClick
