@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.cupcake.ui.components
+package com.example.app_navigation.ui.components
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text

@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.cupcake.ui
+package com.example.app_navigation.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,11 +35,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.app_navigation.R
-import com.example.cupcake.ui.components.FormattedPriceLabel
+import com.example.app_navigation.ui.components.FormattedPriceLabel
 import com.example.cupcake.ui.theme.AppnavigationTheme
 
 /**
@@ -57,7 +59,8 @@ fun SelectOptionScreen(
     var selectedValue by rememberSaveable { mutableStateOf("") }
 
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .background(Color.White),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))) {

@@ -15,6 +15,7 @@
  */
 package com.example.app_navigation.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -37,7 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.app_navigation.R
 import com.example.app_navigation.data.OrderUiState
-import com.example.cupcake.ui.components.FormattedPriceLabel
+import com.example.app_navigation.ui.components.FormattedPriceLabel
 import com.example.cupcake.ui.theme.AppnavigationTheme
 
 /**
@@ -77,7 +79,8 @@ fun OrderSummaryScreen(
     )
 
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .background(Color.White),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
