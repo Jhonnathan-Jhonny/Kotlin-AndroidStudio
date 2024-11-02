@@ -93,6 +93,10 @@ fun CupcakeApp(
             composable(route = CupcakeScreen.Start.name) {
                 StartOrderScreen(
                     quantityOptions = DataSource.quantityOptions,
+                    onNextButtonClicker = {
+                        viewModel.setQuantity(it)
+                        navController.navigate(CupcakeScreen.Flavor.name)
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(dimensionResource(R.dimen.padding_medium))
@@ -102,14 +106,30 @@ fun CupcakeApp(
                 val context = LocalContext.current
                 SelectOptionScreen(
                     subtotal = uiState.price,
-                    options = DataSource.flavors.map { id -> context.resources.getString(id) },
-                    onSelectionChanged = { viewModel.setFlavor(it) },
+                    onNextButtonClicked = { navController.navigate(CupcakeScreen.Summary.name) },
+                    onCancelButtonClicked = { cancelOrderAndNavigationToStart(viewModel,navController) },
+                    options = uiState.pickupOptions,
+                    onSelectionChanged = { viewModel.setDate(it) },
+                    modifier = Modifier.fillMaxHeight()
+                )
+            }
+            composable(route = CupcakeScreen.Pickup.name) {
+                SelectOptionScreen(
+                    subtotal = uiState.price,
+                    onNextButtonClicked = { navController.navigate(CupcakeScreen.Summary.name) },
+                    onCancelButtonClicked = { cancelOrderAndNavigationToStart(viewModel, navController) },
+                    options = uiState.pickupOptions,
+                    onSelectionChanged = { viewModel.setDate(it) },
                     modifier = Modifier.fillMaxHeight()
                 )
             }
             composable(route = CupcakeScreen.Summary.name) {
                 OrderSummaryScreen(
                     orderUiState = uiState,
+                    onCancelButtonClicked = { cancelOrderAndNavigationToStart(viewModel,navController) },
+                    onSendButtonClicked = { subject: String, summary: String ->
+
+                    },
                     modifier = Modifier.fillMaxHeight()
                 )
             }
@@ -117,6 +137,20 @@ fun CupcakeApp(
         Box(modifier = Modifier.padding(innerPadding)) {
         }
     }
+}
+
+//O método popBackStack() tem dois parâmetros obrigatórios.
+//
+//route: string que representa a rota do destino para onde você quer navegar de volta.
+//inclusive: um valor booleano que, se for verdadeiro, também vai destacar (remover) a
+//rota especificada. Se for falso, popBackStack() vai remover todos os destinos acima do
+//    destino inicial, mas não sem o incluir, deixando-o como a tela na camada superior visível para o usuário.
+private fun cancelOrderAndNavigationToStart(
+    viewModel: OrderViewModel,
+    navController: NavHostController
+){
+    viewModel.resetOrder()
+    navController.popBackStack(CupcakeScreen.Start.name, inclusive = false)
 }
 
 @Preview(showBackground = true)
