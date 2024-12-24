@@ -2,9 +2,11 @@ package com.example.app_navigation
 
 import android.content.Context
 import android.content.Intent
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -25,9 +27,11 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.app_navigation.data.DataSource
 import com.example.app_navigation.ui.OrderSummaryScreen
@@ -37,11 +41,11 @@ import com.example.cupcake.ui.OrderViewModel
 import com.example.cupcake.ui.theme.AppnavigationTheme
 
 
-enum class CupcakeScreen() {
-    Start,
-    Flavor,
-    Pickup,
-    Summary
+enum class CupcakeScreen(@StringRes val title: Int) {
+    Start(title = R.string.app_name),
+    Flavor(title = R.string.choose_flavor),
+    Pickup(title = R.string.choose_pickup_date),
+    Summary(title = R.string.order_summary)
 }
 /**
  * Composable that displays the topBar and displays back button if back navigation is possible.
@@ -49,12 +53,13 @@ enum class CupcakeScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CupcakeAppBar(
+    currentScreen: CupcakeScreen, //Serve para config. o botão da tela anterior
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = { Text(stringResource(id = R.string.app_name)) },
+        title = { Text(stringResource(currentScreen.title)) },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
@@ -75,14 +80,23 @@ fun CupcakeAppBar(
 @Composable
 fun CupcakeApp(
     viewModel: OrderViewModel = viewModel(),
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
+    //Serve para criar o botão voltar para a tela anterior
+    //Se houver uma tela atrás da tela atual na backstack, o botão "Up" vai aparecer.
+    // Você pode usar uma expressão booleana para identificar se o botão "Up" será mostrado.
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentScreen = CupcakeScreen.valueOf(
+        backStackEntry?.destination?.route ?: CupcakeScreen.Start.name
+    )
 
     Scaffold(
         topBar = {
             CupcakeAppBar(
-                canNavigateBack = false,
-                navigateUp = { /* TODO: implement back navigation */ }
+                currentScreen = currentScreen,
+                //verificando se a propriedade previousBackStackEntry de navController não é igual a nulo.
+                canNavigateBack = navController.previousBackStackEntry != null,
+                navigateUp = {navController.navigateUp()} //Para voltar à tela anterior
             )
         }
     ) { innerPadding ->
@@ -90,7 +104,8 @@ fun CupcakeApp(
         NavHost(
             navController = navController,
             startDestination = CupcakeScreen.Start.name,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
         ) {
             composable(route = CupcakeScreen.Start.name) {
                 StartOrderScreen(
@@ -101,7 +116,6 @@ fun CupcakeApp(
                     },
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(dimensionResource(R.dimen.padding_medium))
                 )
             }
             composable(route = CupcakeScreen.Flavor.name) {
