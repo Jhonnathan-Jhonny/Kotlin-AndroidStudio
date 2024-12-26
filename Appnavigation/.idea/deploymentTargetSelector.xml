@@ -14,6 +14,9 @@
       <SelectionState runConfigName="CupcakeSummaryScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="selectOptionScreen_verifyContent()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
