@@ -52,6 +52,7 @@ import com.example.reply.R
 import com.example.reply.data.Email
 import com.example.reply.data.local.LocalAccountsDataProvider
 
+//contém elementos componíveis que definem elementos componíveis mais detalhados da tela inicial.
 @Composable
 fun ReplyListOnlyContent(
     replyUiState: ReplyUiState,

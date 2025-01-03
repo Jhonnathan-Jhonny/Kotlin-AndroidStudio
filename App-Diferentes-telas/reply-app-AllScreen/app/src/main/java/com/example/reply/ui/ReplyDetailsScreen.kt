@@ -51,6 +51,7 @@ import com.example.reply.R
 import com.example.reply.data.Email
 import com.example.reply.data.MailboxType
 
+//contém elementos componíveis de tela e elementos componíveis menores para a tela de detalhes.@Composable
 @Composable
 fun ReplyDetailsScreen(
     replyUiState: ReplyUiState,

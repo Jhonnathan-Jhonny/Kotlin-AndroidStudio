@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.reply.data.Email
 import com.example.reply.data.MailboxType
-
+// usa o ReplyAppcomposable como o composable principal onde viewModele uiStatesão declarados.
 @Composable
 fun ReplyApp(
     modifier: Modifier = Modifier,

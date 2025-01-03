@@ -51,6 +51,7 @@ import com.example.reply.data.Email
 import com.example.reply.data.MailboxType
 import com.example.reply.data.local.LocalAccountsDataProvider
 
+//contém os elementos de composição de tela para a tela inicial, incluindo elementos de navegação.
 @Composable
 fun ReplyHomeScreen(
     replyUiState: ReplyUiState,
