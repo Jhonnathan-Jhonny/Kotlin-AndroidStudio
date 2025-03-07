@@ -9,15 +9,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1efa8691-1804-4fa5-b667-81242f759056" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../App-Diferentes-telas/reply-app-AllScreen/app/src/main/java/com/example/reply/ui/ReplyApp.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../App-Diferentes-telas/reply-app-AllScreen/app/src/main/java/com/example/reply/ui/ReplyApp.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../App-Diferentes-telas/reply-app-AllScreen/app/src/main/java/com/example/reply/ui/ReplyDetailsScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../App-Diferentes-telas/reply-app-AllScreen/app/src/main/java/com/example/reply/ui/ReplyDetailsScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../App-Diferentes-telas/reply-app-AllScreen/app/src/main/java/com/example/reply/ui/ReplyHomeContent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../App-Diferentes-telas/reply-app-AllScreen/app/src/main/java/com/example/reply/ui/ReplyHomeContent.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../App-Diferentes-telas/reply-app-AllScreen/app/src/main/java/com/example/reply/ui/ReplyHomeScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../App-Diferentes-telas/reply-app-AllScreen/app/src/main/java/com/example/reply/ui/ReplyHomeScreen.kt" afterDir="false" />
-    </list>
+    <list default="true" id="1efa8691-1804-4fa5-b667-81242f759056" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -71,29 +63,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Android App.app.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "com.google.services.firebase.aqiPopupShown": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/jjrrj/OneDrive/Documents/ProjetoViver",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.17",
-    "project.structure.side.proportion": "0.2"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Android App.app.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/jjrrj/OneDrive/Documents/ProjetoViver&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
   },
-  "keyToStringList": {
-    "kotlin-gradle-user-dirs": [
-      "C:\\Users\\jjrrj\\.gradle"
+  &quot;keyToStringList&quot;: {
+    &quot;kotlin-gradle-user-dirs&quot;: [
+      &quot;C:\\Users\\jjrrj\\.gradle&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\jjrrj\OneDrive\Documents\estudos\Kotlin-AndroidStudio\Viver\app\src\main" />
