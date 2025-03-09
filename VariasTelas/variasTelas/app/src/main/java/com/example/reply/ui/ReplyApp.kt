@@ -32,7 +32,7 @@ fun ReplyApp(
     modifier: Modifier = Modifier,
 ) {
     val viewModel: ReplyViewModel = viewModel()
-    val replyUiState = viewModel.uiState.collect.AsState().value
+    val replyUiState = viewModel.uiState.collectAsState().value
 
     ReplyHomeScreen(
         replyUiState = replyUiState,
