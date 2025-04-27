@@ -19,13 +19,10 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.reply.data.Email
 import com.example.reply.data.MailboxType
-import com.example.reply.ui.theme.ReplyTheme
-import com.example.reply.ui.utils.WindowStateUtils
+import com.example.reply.ui.utils.ReplyNavigationType
 
 @Composable
 fun ReplyApp(
@@ -34,19 +31,18 @@ fun ReplyApp(
 ) {
     val viewModel: ReplyViewModel = viewModel()
     val replyUiState = viewModel.uiState.collectAsState().value
-
-    val navigationType = when (windowSize) {
+    val navigationType: ReplyNavigationType = when (windowSize) {
         WindowWidthSizeClass.Compact -> {
-            WindowStateUtils.BOTTOM_NAVIGATION
+            ReplyNavigationType.BOTTOM_NAVIGATION
         }
         WindowWidthSizeClass.Medium -> {
-            WindowStateUtils.NAVIGATION_RAIL
+            ReplyNavigationType.NAVIGATION_RAIL
         }
         WindowWidthSizeClass.Expanded -> {
-            WindowStateUtils.PERMANENT_NAVIGATION_DRAWER
+            ReplyNavigationType.PERMANENT_NAVIGATION_DRAWER
         }
         else -> {
-            WindowStateUtils.BOTTOM_NAVIGATION
+            ReplyNavigationType.BOTTOM_NAVIGATION
         }
     }
 

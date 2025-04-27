@@ -1,6 +1,5 @@
 package com.example.reply.ui.utils
 
-//Gaveta de navegação
-enum class WindowStateUtils {
+enum class ReplyNavigationType {
     BOTTOM_NAVIGATION, NAVIGATION_RAIL, PERMANENT_NAVIGATION_DRAWER
 }
