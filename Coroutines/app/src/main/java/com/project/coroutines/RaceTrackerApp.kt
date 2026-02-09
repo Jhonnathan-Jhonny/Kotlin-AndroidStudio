@@ -57,7 +57,10 @@ fun RaceTrackerApp() {
 
     if (raceInProgress) {
         LaunchedEffect(playerOne, playerTwo) {
+            // uso do coroutineScope: Para garantir que a função run() do playerOne
+            // e do playerTwo conclua a execução antes de atualizar a flag raceInProgress
             coroutineScope {
+                //Uso do launch: o app vai iniciar duas corrotinas que serão executadas de forma simultânea.
                 launch { playerOne.run() }
                 launch { playerTwo.run() }
             }
