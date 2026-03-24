@@ -15,12 +15,12 @@
  */
 package com.example.marsphotos.ui.screens
 
+import android.graphics.Picture
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,7 +34,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.marsphotos.R
-import com.example.marsphotos.ui.network.MarsUiState
+import com.example.marsphotos.model.MarsPhoto
+import com.example.marsphotos.network.MarsUiState
 import com.example.marsphotos.ui.theme.MarsPhotosTheme
 
 @Composable
@@ -48,7 +49,7 @@ fun HomeScreen(
         is MarsUiState.Success -> ResultScreen(
             marsUiState.photos, modifier = modifier.fillMaxWidth()
         )
-        else -> ErrorScreen( modifier = modifier.fillMaxSize())
+        is MarsUiState.Error -> ErrorScreen( modifier = modifier.fillMaxSize())
     }
 }
 

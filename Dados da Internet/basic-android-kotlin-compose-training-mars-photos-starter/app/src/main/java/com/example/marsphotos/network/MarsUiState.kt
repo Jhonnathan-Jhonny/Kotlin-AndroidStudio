@@ -1,4 +1,4 @@
-package com.example.marsphotos.ui.network
+package com.example.marsphotos.network
 
 sealed interface  MarsUiState {
     data class Success(val photos: String) : MarsUiState
