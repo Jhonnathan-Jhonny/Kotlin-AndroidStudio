@@ -15,14 +15,12 @@
  */
 package com.example.marsphotos.ui.screens
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.marsphotos.data.NetworkMarsPhotosRepository
-import com.example.marsphotos.network.MarsApi
 import com.example.marsphotos.network.MarsUiState
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -49,7 +47,7 @@ class MarsViewModel : ViewModel() {
         viewModelScope.launch {
             marsUiState = MarsUiState.Loading
             marsUiState = try {
-                val marsPhotosRepository = NetworkMarsPhotosRepository()
+                val marsPhotosRepository = NetworkMarsPhotosRepository(retrofitService)
                 val listResult = marsPhotosRepository.getMarsPhotos()
                 MarsUiState.Success(
                     "Success: ${listResult.size} Mars photos retrieved"
