@@ -90,4 +90,8 @@ dependencies {
 
 // OkHttp
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
+
+    //Test
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
 }
