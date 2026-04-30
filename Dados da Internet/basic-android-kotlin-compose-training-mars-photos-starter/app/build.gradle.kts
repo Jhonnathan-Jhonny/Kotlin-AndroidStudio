@@ -79,19 +79,23 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     debugImplementation("androidx.compose.ui:ui-tooling")
 
-// Retrofit base
+    // Retrofit base
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
-// Kotlin serialization
+    // Kotlin serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
-// Converter
+    // Converter
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
 
-// OkHttp
+    // OkHttp
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
     //Test
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
+
+    // Coil
+    // Usada para fazer o download, armazenar em um buffer, decodificar e armazenar as imagens em cache.
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }
