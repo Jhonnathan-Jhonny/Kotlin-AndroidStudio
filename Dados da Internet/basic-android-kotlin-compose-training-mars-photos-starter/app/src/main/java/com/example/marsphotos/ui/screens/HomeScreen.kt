@@ -20,10 +20,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,14 +55,13 @@ import com.example.marsphotos.R
 fun HomeScreen(
     marsUiState: MarsUiState,
     modifier: Modifier = Modifier,
+    retryAction: () -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     when (marsUiState) {
         is MarsUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
-        is MarsUiState.Success -> MarsPhotoCard(
-            marsUiState.photos, modifier = modifier.fillMaxWidth()
-        )
-        is MarsUiState.Error -> ErrorScreen( modifier = modifier.fillMaxSize())
+        is MarsUiState.Success ->   PhotosGridScreen(photos = marsUiState.photos, modifier = modifier)
+        is MarsUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
     }
 }
 
@@ -62,17 +70,23 @@ fun MarsPhotoCard(
     photo: MarsPhoto,
     modifier: Modifier = Modifier
 ) {
-    AsyncImage(
-        model = ImageRequest.Builder(context = LocalContext.current)
-            .data(photo.imgSrc)
-            .crossfade(true)
-            .build(),
-        contentDescription = stringResource(R.string.mars_photo),
-        contentScale = ContentScale.Crop, //Preenche toda a tela
-        error = painterResource(id = R.drawable.ic_broken_image),
-        placeholder = painterResource(id = R.drawable.loading_img),
-        modifier = Modifier.fillMaxWidth()
-    )
+    Card (
+        modifier = modifier,
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp) //ADD padding ao redor das fotos
+    ){
+        AsyncImage(
+            model = ImageRequest.Builder(context = LocalContext.current)
+                .data(photo.imgSrc)
+                .crossfade(true)
+                .build(),
+            contentDescription = stringResource(R.string.mars_photo),
+            contentScale = ContentScale.Crop, //Preenche toda a tela
+            error = painterResource(id = R.drawable.ic_broken_image),
+            placeholder = painterResource(id = R.drawable.loading_img),
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+    }
 }
 
 @Composable
@@ -86,20 +100,23 @@ fun LoadingScreen(modifier: Modifier) {
 }
 
 @Composable
-fun ErrorScreen(modifier: Modifier) {
+fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
     Column (
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ){
         Image(
-            painter = painterResource(id = com.example.marsphotos.R.drawable.ic_connection_error),
-            contentDescription = "Erro!"
+            painter = painterResource(id = R.drawable.ic_connection_error),
+            contentDescription = "Erro de carregamento"
         )
         Text(
-            modifier = Modifier.padding(16.dp),
-            text = stringResource(id = R.string.loading_failed)
+            text = "Failed to load!",
+            modifier = Modifier.padding(16.dp)
         )
+        Button(onClick = retryAction) {
+            Text(text = "Retry")
+        }
     }
 }
 
@@ -116,10 +133,43 @@ fun ResultScreen(photos: String, modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun PhotosGridScreen(
+    photos: List<MarsPhoto>,
+    modifier: Modifier,
+    contentPadding: PaddingValues = PaddingValues(150.dp)
+){
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = modifier.padding(4.dp,100.dp,4.dp,0.dp),
+    ) {
+        items(items = photos, key = { photo -> photo.id }) {
+            photo ->
+            MarsPhotoCard(
+                photo = photo,
+                // Corrigir proporção das imagens
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxWidth()
+                    .aspectRatio(1.5f)
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun ResultScreenPreview() {
     MarsPhotosTheme {
-        ResultScreen(stringResource(R.string.placeholder_result))
+        HomeScreen(marsUiState = MarsUiState.Success(listOf(MarsPhoto("1", "2"))), retryAction = { /*TODO*/ })
     }
 }
+
+//@Preview(showBackground = true)
+//@Composable
+//fun PhotosGridScreenPreview() {
+//    MarsPhotosTheme {
+//        val mockData = List(10) { MarsPhoto("$it", "") }
+//        PhotosGridScreen(mockData)
+//    }
+//}

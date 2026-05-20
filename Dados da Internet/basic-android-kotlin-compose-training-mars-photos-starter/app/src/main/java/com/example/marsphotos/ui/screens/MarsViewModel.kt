@@ -50,13 +50,13 @@ class MarsViewModel (
      * [MarsPhoto] [List] [MutableList].
      */
 
-    private fun getMarsPhotos() {
+    fun getMarsPhotos() {
         viewModelScope.launch {
             marsUiState = MarsUiState.Loading
             marsUiState = try {
 //                val listResult = marsPhotosRepository.getMarsPhotos()
                 val result = marsPhotosRepository.getMarsPhotos()[0]
-                MarsUiState.Success(marsPhotosRepository.getMarsPhotos()[0])
+                MarsUiState.Success(marsPhotosRepository.getMarsPhotos())
             }catch (e: IOException) {
                 MarsUiState.Error
             } catch (e: HttpException) {
