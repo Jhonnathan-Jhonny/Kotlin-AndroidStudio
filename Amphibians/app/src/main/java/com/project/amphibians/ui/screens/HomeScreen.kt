@@ -1,20 +1,28 @@
 package com.project.amphibians.ui.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,11 +46,11 @@ val mockAmphibian = listOf(
 fun HomeScreen(
     amphibiansUiState: AmphibiansUiState,
     retryAction: () -> Unit,
-    modifier: Modifier = Modifier
-){
+    modifier: Modifier = Modifier,
+    ){
     when (amphibiansUiState) {
         is AmphibiansUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
-        is AmphibiansUiState.Success -> ResultScreen(mockAmphibian, modifier = modifier.fillMaxWidth())
+        is AmphibiansUiState.Success -> ResultScreen(amphibiansUiState.photos, modifier = modifier.fillMaxWidth())
         is AmphibiansUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
     }
 }
@@ -67,7 +75,8 @@ fun ResultScreen(amphibians: List<AmphibiansModel>, modifier: Modifier) {
 fun AmphibiansCard(amphibians: AmphibiansModel, modifier: Modifier) {
     Card (
         modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(8.dp),
         // Add padding to the Card
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
@@ -113,11 +122,32 @@ fun AmphibiansCard(amphibians: AmphibiansModel, modifier: Modifier) {
 
 @Composable
 fun LoadingScreen(modifier: Modifier) {
-    TODO("Not yet implemented")
+    Image(
+        modifier = modifier.size(200.dp),
+        painter = painterResource(R.drawable.loading_img),
+        contentDescription = "Carregando!"
+    )
 }
 
+@Composable
 fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier) {
-    TODO("Not yet implemented")
+    Column (
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ){
+        Image(
+            painter = painterResource(id = R.drawable.ic_connection_error),
+            contentDescription = "Erro de carregamento"
+        )
+        Text(
+            text = "Failed to load!",
+            modifier = Modifier.padding(16.dp)
+        )
+        Button(onClick = retryAction) {
+            Text(text = "Retry")
+        }
+    }
 }
 
 @Preview(showBackground = true)

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -86,4 +87,7 @@ dependencies {
     // Coil
     // Usada para fazer o download, armazenar em um buffer, decodificar e armazenar as imagens em cache.
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    //viewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.3")
 }
