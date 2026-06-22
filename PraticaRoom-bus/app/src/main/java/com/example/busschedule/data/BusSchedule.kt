@@ -15,8 +15,13 @@
  */
 package com.example.busschedule.data
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "schedule")
 data class BusSchedule(
-    val id: Int,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val stopName: String,
     val arrivalTimeInMillis: Int
 )
