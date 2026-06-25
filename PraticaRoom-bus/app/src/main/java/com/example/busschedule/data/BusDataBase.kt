@@ -22,7 +22,7 @@ abstract class BusDataBase : RoomDatabase() {
                 Room.databaseBuilder(
                     context,
                     klass = BusDataBase::class.java,
-                    name = "bus_database"
+                    name = "app_database"
                 )
                     .createFromAsset("database/bus_schedule.db")
                     .fallbackToDestructiveMigration()

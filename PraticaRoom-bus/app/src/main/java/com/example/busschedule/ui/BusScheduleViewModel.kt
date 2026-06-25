@@ -17,6 +17,7 @@ package com.example.busschedule.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.busschedule.BusApplication
@@ -34,7 +35,7 @@ class BusScheduleViewModel(
     companion object {
         val factory : ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as BusApplication)
+                val application = (this[APPLICATION_KEY] as BusApplication)
                 BusScheduleViewModel(application.database.busDao())
             }
         }

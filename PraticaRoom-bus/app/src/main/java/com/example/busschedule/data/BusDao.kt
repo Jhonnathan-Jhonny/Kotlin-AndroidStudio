@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BusDao {
-
+//
 //    @Insert
 //    suspend fun insert(busSchedule: BusSchedule)
 //
@@ -18,6 +18,9 @@ interface BusDao {
 //
 //    @Delete
 //    suspend fun delete(busSchedule: BusSchedule)
+//
+//    @Query("SELECT * FROM schedule WHERE id = :id")
+//    fun getById(id: Int): Flow<BusSchedule?>
 
     @Query("SELECT * FROM schedule ORDER BY arrival_time ASC")
     fun getAll(): Flow<List<BusSchedule>>
