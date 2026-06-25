@@ -24,6 +24,8 @@ abstract class BusDataBase : RoomDatabase() {
                     klass = BusDataBase::class.java,
                     name = "bus_database"
                 )
+                    .createFromAsset("database/bus_schedule.db")
+                    .fallbackToDestructiveMigration()
                     .build()
                     .also { INSTANCE = it }
             }
