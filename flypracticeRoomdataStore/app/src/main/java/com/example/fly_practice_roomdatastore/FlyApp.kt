@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
@@ -45,5 +46,16 @@ fun FlyTopBar(
                 }
             }
         }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@Preview(showBackground = true)
+fun FlyTopBarPreview(){
+    FlyTopBar(
+        title = "Test",
+        canNavigateBack = true,
+        navigateUp = {  }
     )
 }
