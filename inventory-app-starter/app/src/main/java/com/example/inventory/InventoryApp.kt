@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.inventory.R.string
@@ -67,5 +68,15 @@ fun InventoryTopAppBar(
                 }
             }
         }
+    )
+}
+
+@Preview
+@Composable
+fun InventoryTopAppBarPreview() {
+    InventoryTopAppBar(
+        title = stringResource(string.app_name),
+        canNavigateBack = false,
+        modifier = Modifier
     )
 }
