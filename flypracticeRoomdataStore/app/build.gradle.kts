@@ -50,8 +50,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
 
     // DataStore
-    implementation(libs.androidx.datastore.core)
-    implementation(libs.androidx.datastore.preferences.core)
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
