@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.fly_practice_roomdatastore.data.AppDatabase
+import com.example.fly_practice_roomdatastore.data.ItemRepository
 import com.example.fly_practice_roomdatastore.data.UserPreferencesRepository
 
 
@@ -15,10 +17,14 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 
 
 class FlyReleaseApplication : Application() {
+    lateinit var itemRepository: ItemRepository
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
     override fun onCreate() {
         super.onCreate()
         userPreferencesRepository = UserPreferencesRepository(dataStore)
+
+        val database = AppDatabase.getDatabase(this)
+        itemRepository = ItemRepository(database.itemDao())
     }
 }

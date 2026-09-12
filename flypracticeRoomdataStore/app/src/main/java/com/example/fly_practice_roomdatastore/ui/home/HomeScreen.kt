@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -42,7 +44,11 @@ object HomeDestination: NavigationDestination {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+) {
+
+    val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 
 //    val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -60,13 +66,17 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         HomeBody(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize()
+                .fillMaxSize(),
+            viewModel = viewModel
         )
     }
 }
 
 @Composable
-fun HomeBody(modifier: Modifier) {
+fun HomeBody(
+    modifier: Modifier,
+    viewModel: HomeViewModel
+) {
     var textSeach by remember { mutableStateOf("") }
 
     Column(
@@ -101,11 +111,22 @@ fun HomeBody(modifier: Modifier) {
             ),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    // Perform search action here
+                    viewModel.searchAirports(textSeach)
                 }
             ),
             singleLine = true
         )
+        LazyColumn {
+            items(viewModel.searchResults) { airport ->
+                Text(
+                    text = "${airport.name} (${airport.iataCode})",
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 8.dp
+                    )
+                )
+            }
+        }
     }
 }
 

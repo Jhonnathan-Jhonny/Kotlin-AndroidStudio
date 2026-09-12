@@ -23,7 +23,7 @@ class UserPreferencesRepository(
     }
 
     //Gravar no DataStore
-    suspend fun saveLayoutToPreferencesStore(isLinearLayoutManager: Boolean, context: Context) {
+    suspend fun saveLayoutToPreferencesStore(isLinearLayoutManager: Boolean) {
         dataStore.edit { preferences ->
             preferences[IS_LINEAR_LAYOUT] = isLinearLayoutManager
         }
