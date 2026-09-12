@@ -8,9 +8,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.fly_practice_roomdatastore.data.UserPreferencesRepository
 
 
-private const val TAG = "layout_preferences"
+private const val USER_PREFERENCES_NAME = "layout_preferences"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
-    name = TAG
+    name = USER_PREFERENCES_NAME
 )
 
 
