@@ -77,6 +77,6 @@ dependencies {
 
     //Room
     implementation(libs.androidx.room3.common.jvm)
-    implementation(libs.androidx.room3.runtime)
     ksp("androidx.room3:room3-compiler:3.0.3")
+    implementation(libs.androidx.room3.runtime)
 }

@@ -2,6 +2,7 @@ package com.example.fly_practice_roomdatastore.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +12,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fly_practice_roomdatastore.FlyTopBar
 import com.example.fly_practice_roomdatastore.R
+import com.example.fly_practice_roomdatastore.data.Item
 import com.example.fly_practice_roomdatastore.ui.navigation.NavigationDestination
 
 object HomeDestination: NavigationDestination {
@@ -51,10 +57,10 @@ fun HomeScreen(
     val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
 
 //    val homeUiState by viewModel.homeUiState.collectAsState()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+//    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier,
         topBar = {
             FlyTopBar(
                 title = stringResource(HomeDestination.titleRes),
@@ -67,7 +73,8 @@ fun HomeScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
-            viewModel = viewModel
+            searchResults = viewModel.searchResults,
+            onSearch = viewModel::searchAirports
         )
     }
 }
@@ -75,33 +82,38 @@ fun HomeScreen(
 @Composable
 fun HomeBody(
     modifier: Modifier,
-    viewModel: HomeViewModel
-) {
-    var textSeach by remember { mutableStateOf("") }
+    searchResults: List<Item>,
+    onSearch: (String) -> Unit)
+{
+    var textSearch by remember { mutableStateOf("") }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
         OutlinedTextField(
-            value = textSeach,
-            onValueChange = { textSeach = it },
+            value = textSearch,
+            onValueChange = { textSearch = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             placeholder = { Text(text = "Search") },
             leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null
-                )
+                IconButton(
+                    onClick = {onSearch(textSearch)}
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Pesquisar"
+                    )
+                }
             },
             trailingIcon = {
-                if (textSeach.isNotEmpty()) {
-                    IconButton(onClick = { textSeach = "" }) {
+                if (textSearch.isNotEmpty()) {
+                    IconButton(onClick = { textSearch = "" }) {
                         Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Limpar"
                         )
                     }
                 }
@@ -111,19 +123,80 @@ fun HomeBody(
             ),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    viewModel.searchAirports(textSeach)
+                    onSearch(textSearch)
                 }
             ),
             singleLine = true
         )
-        LazyColumn {
-            items(viewModel.searchResults) { airport ->
-                Text(
-                    text = "${airport.name} (${airport.iataCode})",
-                    modifier = Modifier.padding(
-                        horizontal = 16.dp,
-                        vertical = 8.dp
-                    )
+        FlyList(
+            itemList = searchResults,
+            onFavoriteItemClick = { /*TODO*/ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        )
+    }
+}
+
+@Composable
+fun FlyList(
+    itemList: List<Item>,
+    onFavoriteItemClick: (Item) -> Unit,
+    modifier: Modifier = Modifier
+){
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        items(items = itemList, key = { it.id }) { item ->
+            FlyItem(
+                item = item,
+                onFavoriteItemClick = onFavoriteItemClick
+            )
+        }
+    }
+}
+
+@Composable
+fun FlyItem(
+    item: Item,
+    onFavoriteItemClick: (Item) -> Unit,
+    modifier: Modifier = Modifier
+){
+    Card(
+        modifier = modifier,
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(0.9F),
+        ){
+            Text(
+                text = item.name,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp)
+            )
+            Text(
+                text = item.iataCode,
+                modifier = Modifier
+                    .padding(16.dp)
+            )
+            Text(
+                text = item.passengers.toString(),
+                modifier = Modifier
+                    .padding(16.dp)
+            )
+            IconButton(
+                onClick = { onFavoriteItemClick(item) },
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Favorite"
                 )
             }
         }
@@ -132,6 +205,23 @@ fun HomeBody(
 
 @Preview(showBackground = true)
 @Composable
-fun HomeScreenPreview(){
-    HomeScreen()
+fun HomeBodyPreview() {
+    HomeBody(
+        modifier = Modifier.fillMaxSize(),
+        searchResults = listOf(
+            Item(
+                id = 1,
+                name = "Francisco Sá Carneiro Airport",
+                iataCode = "OPO",
+                passengers = 5053134
+            ),
+            Item(
+                id = 2,
+                name = "Stockholm Arlanda Airport",
+                iataCode = "ARN",
+                passengers = 7494765
+            )
+        ),
+        onSearch = {}
+    )
 }
