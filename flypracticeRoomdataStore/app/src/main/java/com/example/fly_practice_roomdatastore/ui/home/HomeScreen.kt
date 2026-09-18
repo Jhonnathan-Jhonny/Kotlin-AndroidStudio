@@ -1,5 +1,6 @@
 package com.example.fly_practice_roomdatastore.ui.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.HeartBroken
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -74,7 +76,9 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .fillMaxSize(),
             searchResults = viewModel.searchResults,
-            onSearch = viewModel::searchAirports
+            onSearch = viewModel::searchAirports,
+            uiState = viewModel.uiState.collectAsState().value,
+            favoriteFly = viewModel::favoriteFly
         )
     }
 }
@@ -83,8 +87,10 @@ fun HomeScreen(
 fun HomeBody(
     modifier: Modifier,
     searchResults: List<Item>,
-    onSearch: (String) -> Unit)
-{
+    onSearch: (String) -> Unit,
+    uiState: FlyUiState = FlyUiState(),
+    favoriteFly: (String) -> Unit = {}
+){
     var textSearch by remember { mutableStateOf("") }
 
     Column(
@@ -130,7 +136,8 @@ fun HomeBody(
         )
         FlyList(
             itemList = searchResults,
-            onFavoriteItemClick = { /*TODO*/ },
+            uiState = uiState,
+            favoriteFly = favoriteFly,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
@@ -141,18 +148,24 @@ fun HomeBody(
 @Composable
 fun FlyList(
     itemList: List<Item>,
-    onFavoriteItemClick: (Item) -> Unit,
+    uiState: FlyUiState,
+    favoriteFly: (String) -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(items = itemList, key = { it.id }) { item ->
+        items(
+            items = itemList,
+            key = { it.id }
+        ) { item ->
+
             FlyItem(
                 item = item,
-                onFavoriteItemClick = onFavoriteItemClick
+                uiState = uiState,
+                favoriteFly = favoriteFly
             )
         }
     }
@@ -161,41 +174,50 @@ fun FlyList(
 @Composable
 fun FlyItem(
     item: Item,
-    onFavoriteItemClick: (Item) -> Unit,
+    uiState: FlyUiState,
+    favoriteFly: (String) -> Unit,
     modifier: Modifier = Modifier
-){
+) {
+    val isFavorite = item.iataCode in uiState.favoriteAirports
+
+    val toggleIcon =
+        if (isFavorite) {
+            Icons.Default.Favorite
+        } else {
+            Icons.Default.HeartBroken
+        }
+
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth(0.9F),
-        ){
+            modifier = Modifier.fillMaxWidth(0.9F)
+        ) {
             Text(
                 text = item.name,
                 modifier = Modifier
                     .weight(1f)
                     .padding(16.dp)
             )
+
             Text(
                 text = item.iataCode,
-                modifier = Modifier
-                    .padding(16.dp)
+                modifier = Modifier.padding(16.dp)
             )
+
             Text(
                 text = item.passengers.toString(),
-                modifier = Modifier
-                    .padding(16.dp)
+                modifier = Modifier.padding(16.dp)
             )
+
             IconButton(
-                onClick = { onFavoriteItemClick(item) },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(8.dp)
+                onClick = {
+                    favoriteFly(item.iataCode)
+                }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Favorite,
+                    imageVector = toggleIcon,
                     contentDescription = "Favorite"
                 )
             }

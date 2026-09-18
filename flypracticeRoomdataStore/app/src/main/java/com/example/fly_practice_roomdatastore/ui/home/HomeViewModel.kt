@@ -13,14 +13,17 @@ import com.example.fly_practice_roomdatastore.FlyReleaseApplication
 import com.example.fly_practice_roomdatastore.data.Item
 import com.example.fly_practice_roomdatastore.data.ItemRepository
 import com.example.fly_practice_roomdatastore.data.UserPreferencesRepository
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
 class HomeViewModel(
     private val itemRepository: ItemRepository,
     private val userPreferencesRepository: UserPreferencesRepository
-) : ViewModel()
-{
+) : ViewModel() {
 
     //Buscra no banco de daos
     var searchResults by mutableStateOf<List<Item>>(emptyList())
@@ -40,11 +43,34 @@ class HomeViewModel(
                 val application = (this[APPLICATION_KEY] as FlyReleaseApplication)
                 HomeViewModel(
                     itemRepository = application.itemRepository,
-    application.userPreferencesRepository
+                    application.userPreferencesRepository
                 )
             }
         }
     }
 
     //Armazenar preferencias
+    fun favoriteFly(iataCode: String) {
+        viewModelScope.launch {
+            userPreferencesRepository.toggleFavorite(iataCode)
+        }
+    }
+
+    //Ler preferências
+    val uiState: StateFlow<FlyUiState> =
+        userPreferencesRepository.favoriteAirports
+            .map { favorites ->
+                FlyUiState(
+                    favoriteAirports = favorites
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = FlyUiState()
+            )
 }
+
+data class FlyUiState(
+    val favoriteAirports: Set<String> = emptySet()
+)
