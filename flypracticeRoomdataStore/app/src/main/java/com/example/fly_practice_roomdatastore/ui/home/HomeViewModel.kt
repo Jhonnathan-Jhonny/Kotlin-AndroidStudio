@@ -13,8 +13,11 @@ import com.example.fly_practice_roomdatastore.FlyReleaseApplication
 import com.example.fly_practice_roomdatastore.data.Item
 import com.example.fly_practice_roomdatastore.data.ItemRepository
 import com.example.fly_practice_roomdatastore.data.UserPreferencesRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -57,20 +60,50 @@ class HomeViewModel(
     }
 
     //Ler preferências
+    @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<FlyUiState> =
         userPreferencesRepository.favoriteAirports
-            .map { favorites ->
-                FlyUiState(
-                    favoriteAirports = favorites
-                )
+            .flatMapLatest { codes ->
+                flow {
+                    val items =
+                        if (codes.isEmpty()) {
+                            emptyList()
+                        } else {
+                            itemRepository.getFavoriteAirports(
+                                codes.toList()
+                            )
+                        }
+
+                    emit(
+                        FlyUiState(
+                            favoriteAirports = codes,
+                            favoriteItems = items
+                        )
+                    )
+                }
             }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
                 initialValue = FlyUiState()
             )
+
+    fun loadFavoriteAirports() {
+        viewModelScope.launch {
+            userPreferencesRepository.favoriteAirports.collect { favorites ->
+                searchResults =
+                    if(favorites.isNotEmpty()){
+                        emptyList()
+                    }
+                    else{
+                        itemRepository.getFavoriteAirports(favorites.toList())
+                    }
+            }
+        }
+    }
 }
 
 data class FlyUiState(
-    val favoriteAirports: Set<String> = emptySet()
+    val favoriteAirports: Set<String> = emptySet(),
+    val favoriteItems: List<Item> = emptyList()
 )

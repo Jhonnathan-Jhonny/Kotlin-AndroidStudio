@@ -93,6 +93,13 @@ fun HomeBody(
 ){
     var textSearch by remember { mutableStateOf("") }
 
+    val itemsToShow =
+        if (textSearch.isEmpty()) {
+            uiState.favoriteItems
+        } else {
+            searchResults
+        }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -116,7 +123,9 @@ fun HomeBody(
             },
             trailingIcon = {
                 if (textSearch.isNotEmpty()) {
-                    IconButton(onClick = { textSearch = "" }) {
+                    IconButton(onClick = {
+                        textSearch = ""
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Clear,
                             contentDescription = "Limpar"
@@ -135,7 +144,7 @@ fun HomeBody(
             singleLine = true
         )
         FlyList(
-            itemList = searchResults,
+            itemList = itemsToShow,
             uiState = uiState,
             favoriteFly = favoriteFly,
             modifier = Modifier
@@ -161,7 +170,6 @@ fun FlyList(
             items = itemList,
             key = { it.id }
         ) { item ->
-
             FlyItem(
                 item = item,
                 uiState = uiState,

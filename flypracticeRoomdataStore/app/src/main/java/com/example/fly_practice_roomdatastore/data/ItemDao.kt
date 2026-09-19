@@ -12,4 +12,10 @@ interface ItemDao {
         "ORDER BY passengers DESC"
     )
     suspend fun searchAirports(query: String): List<Item>
+
+    @Query("""
+    SELECT * FROM airport
+    WHERE iata_code IN (:codes)
+""")
+    suspend fun getFavoriteAirports(codes: List<String>): List<Item>
 }
