@@ -125,7 +125,10 @@ fun BluromaticScreenContent(
         BlurActions(
             blurUiState = blurUiState,
             onStartClick = { applyBlur(selectedValue) },
-            onSeeFileClick = {},
+            //Armazena a Uri da imagem salva
+            onSeeFileClick = {currentUri ->
+                showBlurredImage(context, currentUri)
+            },
             onCancelClick = { cancelWork() },
             modifier = Modifier.fillMaxWidth()
         )
