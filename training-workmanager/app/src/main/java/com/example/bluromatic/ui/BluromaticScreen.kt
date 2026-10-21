@@ -121,6 +121,7 @@ fun BluromaticScreenContent(
             blurAmounts = blurAmountOptions,
             modifier = Modifier.fillMaxWidth(),
             onSelectedValueChange = { selectedValue = it }
+            
         )
         BlurActions(
             blurUiState = blurUiState,
