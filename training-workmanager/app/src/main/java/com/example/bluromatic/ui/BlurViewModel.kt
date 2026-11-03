@@ -82,6 +82,9 @@ class BlurViewModel(private val bluromaticRepository: BluromaticRepository) : Vi
             }
         }
     }
+    fun cancelWork() {
+        bluromaticRepository.cancelWork()
+    }
 }
 
 sealed interface BlurUiState {
