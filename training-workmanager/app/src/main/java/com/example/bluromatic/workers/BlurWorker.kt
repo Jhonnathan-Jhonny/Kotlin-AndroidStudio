@@ -3,7 +3,6 @@ package com.example.bluromatic.workers
 import android.Manifest
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.work.CoroutineWorker

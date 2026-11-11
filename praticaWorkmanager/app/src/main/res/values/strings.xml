@@ -22,6 +22,8 @@
     <string name="one_month">1 month</string>
     <string name="water">Water</string>
     <string name="time_to_water">It\'s time to water your %s.</string>
+    <string name="error_applying_water">Error applying Water Me</string>
+
 
     <string name="lithop">Lithop</string>
     <string name="carrot">Carrot</string>

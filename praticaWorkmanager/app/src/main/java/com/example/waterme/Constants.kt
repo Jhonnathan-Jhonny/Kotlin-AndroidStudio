@@ -41,3 +41,6 @@ const val FIVE_SECONDS: Long = 5
 const val ONE_DAY: Long = 1
 const val SEVEN_DAYS: Long = 7
 const val THIRTY_DAYS: Long = 30
+
+const val DELAY_TIME_MILLIS: Long = 3000
+

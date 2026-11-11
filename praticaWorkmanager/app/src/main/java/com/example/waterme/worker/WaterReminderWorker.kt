@@ -16,26 +16,48 @@
 
 package com.example.waterme.worker
 
+import android.Manifest
 import android.content.Context
+import androidx.annotation.RequiresPermission
+import androidx.compose.remote.creation.compose.state.log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.waterme.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import android.util.Log
+import com.example.waterme.DELAY_TIME_MILLIS
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
+
+private const val TAG = "WaterReminderWorker"
 class WaterReminderWorker(
     context: Context,
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
 
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override suspend fun doWork(): Result {
-
         val plantName = inputData.getString(nameKey)
-
         makePlantReminderNotification(
             applicationContext.resources.getString(R.string.time_to_water, plantName),
             applicationContext
         )
 
-        return Result.success()
+        return withContext(Dispatchers.IO){
+            delay(DELAY_TIME_MILLIS.milliseconds)
+            return@withContext try {
+                Result.success()
+            } catch (throwable: Throwable) {
+                Log.e(
+                    TAG,
+                    applicationContext.resources.getString(R.string.error_applying_water),
+                    throwable
+                )
+                Result.failure()
+            }
+        }
     }
 
     companion object {
