@@ -45,19 +45,7 @@ class WaterReminderWorker(
             applicationContext
         )
 
-        return withContext(Dispatchers.IO){
-            delay(DELAY_TIME_MILLIS.milliseconds)
-            return@withContext try {
-                Result.success()
-            } catch (throwable: Throwable) {
-                Log.e(
-                    TAG,
-                    applicationContext.resources.getString(R.string.error_applying_water),
-                    throwable
-                )
-                Result.failure()
-            }
-        }
+        return Result.success()
     }
 
     companion object {

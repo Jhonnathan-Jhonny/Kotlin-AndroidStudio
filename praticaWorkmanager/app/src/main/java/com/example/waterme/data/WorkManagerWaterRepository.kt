@@ -16,6 +16,7 @@
 
 package com.example.waterme.data
 
+import android.R.attr.duration
 import android.content.Context
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
@@ -31,5 +32,18 @@ class WorkManagerWaterRepository(context: Context) : WaterRepository {
     override val plants: List<Plant>
         get() = DataSource.plants
 
-    override fun scheduleReminder(duration: Long, unit: TimeUnit, plantName: String) {}
+    override fun scheduleReminder(duration: Long, unit: TimeUnit, plantName: String) {
+        val data = Data.Builder()
+            .putString(WaterReminderWorker.nameKey, plantName)
+            .build()
+        val request = OneTimeWorkRequestBuilder<WaterReminderWorker>()
+            .setInitialDelay(duration, unit)
+            .setInputData(data)
+            .build()
+        workManager.enqueueUniqueWork(
+            plantName,
+            ExistingWorkPolicy.REPLACE,
+            request //Objetivo
+        )
+    }
 }
